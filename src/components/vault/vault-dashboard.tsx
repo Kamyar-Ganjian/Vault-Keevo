@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { FiArchive, FiArrowRight, FiPlus, FiStar } from "react-icons/fi";
 import { ItemCard } from "@/components/vault/item-card";
+import { VaultCore } from "@/components/vault-core";
 import type { ItemCardData, Category } from "@/lib/types";
 import { CATEGORIES } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -38,23 +39,21 @@ export function VaultDashboard({ items }: { items: ItemCardData[] }) {
 
   if (everythingEmpty) {
     return (
-      <div className="flex flex-col items-center py-20 text-center">
-        <span className="grid h-12 w-12 place-items-center rounded-xl bg-surface-3 text-accent ring-1 ring-line-strong">
-          <FiArchive className="h-5.5 w-5.5" />
-        </span>
-        <h2 className="mt-5 text-xl font-semibold tracking-tight text-ink">
+      <div className="flex flex-col items-center py-24 text-center">
+        <VaultCore size={92} />
+        <h2 className="mt-7 text-xl font-semibold tracking-tight text-ink">
           Your vault is empty
         </h2>
         <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted">
-          Keevo is where you keep the things you use every day. Add your first
-          item — an account, a server, a domain — and give it a name.
+          Start adding the things you don&apos;t want to lose — an account, a
+          server, a domain. Give each one a name and a place.
         </p>
         <Link
           href="/vault/new"
           className="mt-7 inline-flex h-10 items-center gap-2 rounded-lg bg-accent px-5 text-sm font-medium text-accent-fg transition-colors hover:bg-accent-strong"
         >
           <FiPlus className="h-4 w-4" />
-          Create your first item
+          Add your first item
         </Link>
       </div>
     );

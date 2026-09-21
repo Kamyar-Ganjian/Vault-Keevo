@@ -26,6 +26,7 @@ import {
   toggleFavoriteAction,
 } from "@/lib/actions/items";
 import type { ItemDetailData } from "@/lib/types";
+import { CATEGORY_COLORS } from "@/lib/types";
 import { cn, formatDate } from "@/lib/utils";
 
 const ENTER = {
@@ -147,11 +148,21 @@ export function ItemDetail({ item }: { item: ItemDetailData }) {
         <div className="px-5 pb-6 pt-6 sm:px-6">
           <div className="flex items-center gap-4">
             <motion.span
+              className="relative shrink-0"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ type: "spring", duration: 0.55, bounce: 0.12, delay: 0.05 }}
             >
-              <ItemIcon icon={item.icon} appearance={item.appearance} size="hero" />
+              <span
+                aria-hidden
+                className="absolute -inset-2 rounded-full blur-xl"
+                style={{
+                  background: `color-mix(in srgb, ${item.appearance.accent} 24%, transparent)`,
+                }}
+              />
+              <span className="relative">
+                <ItemIcon icon={item.icon} appearance={item.appearance} size="hero" />
+              </span>
             </motion.span>
             <div className="min-w-0 flex-1">
               <h1 className="truncate text-2xl font-semibold tracking-tight text-ink sm:text-[28px]">
@@ -178,7 +189,17 @@ export function ItemDetail({ item }: { item: ItemDetailData }) {
           </div>
 
           <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-line pt-4 text-xs text-muted">
-            <span className="inline-flex items-center rounded-md bg-surface-2 px-2 py-0.5 capitalize font-medium ring-1 ring-line">
+            <span
+              className="inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 capitalize font-medium"
+              style={{
+                color: `color-mix(in srgb, ${CATEGORY_COLORS[item.category]} 72%, var(--ink))`,
+                background: `color-mix(in srgb, ${CATEGORY_COLORS[item.category]} 8%, transparent)`,
+              }}
+            >
+              <span
+                className="h-1.5 w-1.5 rounded-full"
+                style={{ background: CATEGORY_COLORS[item.category] }}
+              />
               {item.category}
             </span>
             <span className="inline-flex items-center gap-1.5 text-faint">

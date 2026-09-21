@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { FiEye, FiEyeOff, FiExternalLink } from "react-icons/fi";
 import { CopyButton } from "@/components/items/copy-button";
 import { isSensitiveType, type FieldType } from "@/lib/field-types";
@@ -46,9 +47,18 @@ export function FieldDisplay({
       </div>
 
       <div className="mt-1.5 flex items-center gap-2">
-        <div className="min-w-0 flex-1">
-          <ValueBody type={type} value={value} show={show} />
-        </div>
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={show ? "value" : "masked"}
+            initial={{ opacity: 0, y: 2 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -2 }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
+            className="min-w-0 flex-1"
+          >
+            <ValueBody type={type} value={value} show={show} />
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );

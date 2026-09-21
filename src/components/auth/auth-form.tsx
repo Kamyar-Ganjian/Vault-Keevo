@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useForm, type Path } from "react-hook-form";
 import { FiArchive, FiEye, FiEyeOff, FiLock, FiZap } from "react-icons/fi";
@@ -10,7 +11,7 @@ import { loginAction, signupAction } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/kbd";
-import { Logo, KeevoMark } from "@/components/layout/logo";
+import { Logo, Mark } from "@/components/layout/logo";
 
 interface AuthValues {
   name: string;
@@ -82,10 +83,24 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
         <div className="w-full max-w-md">
           <div className="rounded-2xl bg-surface p-7 shadow-elev ring-1 ring-line-strong sm:p-8">
             <div className="mb-6 flex flex-col items-center text-center">
-              <span className="grid h-12 w-12 place-items-center rounded-xl bg-accent text-accent-fg">
-                <KeevoMark className="h-6 w-6" />
-              </span>
-              <h1 className="mt-4 text-xl font-semibold tracking-tight text-ink">
+              <Image
+                src="/logos/keevo-white.png"
+                alt=""
+                aria-hidden
+                width={663}
+                height={131}
+                priority
+                className="hidden h-16 w-full object-contain object-center dark:block"
+              />
+              <Image
+                src="/logos/keevo-black.png"
+                alt="Keevo"
+                width={663}
+                height={131}
+                priority
+                className="h-16 w-full object-contain object-center dark:hidden"
+              />
+              <h1 className="mt-5 text-xl font-semibold tracking-tight text-ink">
                 {isLogin ? "Welcome back" : "Create your vault"}
               </h1>
               <p className="mt-1.5 text-sm text-muted">
@@ -235,7 +250,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
       </div>
 
       <footer className="flex items-center justify-center gap-1.5 pb-8 text-[11px] text-faint">
-        <KeevoMark className="h-3 w-3" />
+        <Mark className="h-3 w-[76px]" />
         Keevo — your personal vault
       </footer>
     </div>

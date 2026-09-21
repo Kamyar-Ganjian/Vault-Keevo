@@ -9,6 +9,7 @@ import { Logo } from "@/components/layout/logo";
 import { ThemeMenu } from "@/components/layout/theme-menu";
 import { UserMenu } from "@/components/layout/user-menu";
 import { SearchCommand } from "@/components/search/search-command";
+import { VaultAtmosphere } from "@/components/vault-core";
 import { Kbd } from "@/components/ui/kbd";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -99,7 +100,7 @@ export function AppShell({
       <div className="flex min-w-0 flex-1 flex-col lg:pl-60">
         <header className="sticky top-0 z-40 h-14 border-b border-line bg-app lg:hidden">
           <div className="mx-auto flex h-14 max-w-6xl items-center gap-1.5 px-3.5 sm:gap-2 sm:px-6">
-            <Logo hideLabelOnMobile />
+            <Logo />
 
             <div className="flex-1" />
 
@@ -118,8 +119,9 @@ export function AppShell({
               size="icon-sm"
               aria-label="Add item"
               variant="primary"
+              className="group"
             >
-              <FiPlus className="h-4 w-4" />
+              <FiPlus className="h-4 w-4 transition-transform duration-200 group-hover:rotate-90" />
             </Button>
 
             <ThemeMenu />
@@ -128,17 +130,20 @@ export function AppShell({
         </header>
 
         <main className="relative flex-1">
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={pathname}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.18, ease: "easeOut" }}
-            >
-              {children}
-            </motion.div>
-          </AnimatePresence>
+          <VaultAtmosphere />
+          <div className="relative">
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={pathname}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.18, ease: "easeOut" }}
+              >
+                {children}
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </main>
       </div>
 

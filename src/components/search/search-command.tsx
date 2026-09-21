@@ -7,7 +7,8 @@ import { FiArrowRight, FiSearch, FiStar } from "react-icons/fi";
 import { searchItemsAction } from "@/lib/actions/items";
 import type { ItemCardData } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { Kbd, Spinner } from "@/components/ui/kbd";
+import { Kbd } from "@/components/ui/kbd";
+import { VaultPulse } from "@/components/vault-core";
 import { ItemIcon } from "@/components/items/item-icon";
 
 export function SearchCommand({
@@ -101,11 +102,11 @@ function SearchPalette({ onClose }: { onClose: () => void }) {
       aria-label="Search your vault"
     >
       <motion.div
-        className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
+        className="absolute inset-0 bg-black/60 backdrop-blur-md"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.15 }}
+        transition={{ duration: 0.18 }}
         onClick={onClose}
       />
       <motion.div
@@ -113,11 +114,15 @@ function SearchPalette({ onClose }: { onClose: () => void }) {
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.98, y: -6 }}
         transition={{ type: "spring", duration: 0.32, bounce: 0.16 }}
-        className="relative w-full max-w-xl overflow-hidden rounded-2xl bg-surface-4/90 shadow-elev ring-1 ring-line-strong backdrop-blur-2xl"
+        className="relative w-full max-w-xl overflow-hidden rounded-2xl bg-surface-4/90 shadow-[0_24px_80px_-28px_rgba(139,124,255,0.4)] ring-1 ring-line-strong backdrop-blur-2xl"
       >
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent"
+        />
         <div className="flex items-center gap-3 border-b border-line px-4">
           {loading ? (
-            <Spinner className="text-faint" />
+            <VaultPulse />
           ) : (
             <FiSearch className="h-4 w-4 shrink-0 text-faint" />
           )}

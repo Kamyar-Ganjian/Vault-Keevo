@@ -9,6 +9,14 @@ export const CATEGORIES = [
 
 export type Category = (typeof CATEGORIES)[number]["value"];
 
+/** Quiet color signals per category. Used only at low opacity. */
+export const CATEGORY_COLORS: Record<Category, string> = {
+  account: "#8b7cff",
+  server: "#34d399",
+  domain: "#38bdf8",
+  other: "#94a3b8",
+};
+
 export type IconShape = "circle" | "rounded" | "square";
 export type BannerStyle = "none" | "accent" | "gradient";
 

@@ -1,32 +1,60 @@
+"use client";
+
+import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-export function KeevoMark({ className }: { className?: string }) {
+export type LogoVariant = "auto" | "white" | "black" | "accent";
+
+const LOGO = {
+  white: "/logos/keevo-white.png",
+  black: "/logos/keevo-black.png",
+  accent: "/logos/keevo-accent.png",
+} as const;
+
+function BrandImage({
+  src,
+  className,
+  priority,
+}: {
+  src: string;
+  className?: string;
+  priority?: boolean;
+}) {
   return (
-    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true" className={className}>
-      <rect
-        x="4.5"
-        y="4.5"
-        width="23"
-        height="23"
-        rx="8"
-        stroke="currentColor"
-        strokeWidth="2.2"
-      />
-      <path
-        d="M13.5 11.5v9"
-        stroke="currentColor"
-        strokeWidth="2.6"
-        strokeLinecap="round"
-      />
-      <path
-        d="M19.5 12.5 15 16l4.5 3.5"
-        stroke="currentColor"
-        strokeWidth="2.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <Image
+      src={src}
+      alt=""
+      aria-hidden
+      width={663}
+      height={131}
+      priority={priority}
+      className={cn("object-contain object-center", className)}
+    />
+  );
+}
+
+export function Mark({
+  variant = "auto",
+  className,
+}: {
+  variant?: LogoVariant;
+  className?: string;
+}) {
+  if (variant === "white") {
+    return <BrandImage src={LOGO.white} className={className} />;
+  }
+  if (variant === "black") {
+    return <BrandImage src={LOGO.black} className={className} />;
+  }
+  if (variant === "accent") {
+    return <BrandImage src={LOGO.accent} className={className} />;
+  }
+  return (
+    <>
+      <BrandImage src={LOGO.white} className={cn("hidden dark:block", className)} />
+      <BrandImage src={LOGO.black} className={cn("dark:hidden", className)} />
+    </>
   );
 }
 
@@ -34,33 +62,29 @@ export function Logo({
   className,
   href = "/vault",
   size = "md",
-  hideLabelOnMobile = false,
 }: {
   className?: string;
   href?: string;
   size?: "sm" | "md";
-  hideLabelOnMobile?: boolean;
 }) {
+  const sizeClass = size === "md" ? "h-7 w-44" : "h-6 w-[150px]";
   return (
-    <Link href={href} className={cn("group inline-flex items-center gap-2.5", className)}>
-      <span
+    <Link href={href} className={cn("group inline-block", className)}>
+      <span className="sr-only">Keevo</span>
+      <BrandImage
+        src={LOGO.white}
         className={cn(
-          "grid shrink-0 place-items-center rounded-[9px] bg-accent text-accent-fg",
-          "transition-transform duration-200 group-hover:scale-[1.03] group-active:scale-95",
-          size === "md" ? "h-8 w-8" : "h-7 w-7",
+          "transition-transform duration-200 group-hover:scale-[1.03] group-active:scale-95 hidden dark:block",
+          sizeClass,
         )}
-      >
-        <KeevoMark className={cn(size === "md" ? "h-[58%] w-[58%]" : "h-[54%] w-[54%]")} />
-      </span>
-      <span
+      />
+      <BrandImage
+        src={LOGO.black}
         className={cn(
-          "font-semibold tracking-tight text-ink",
-          size === "md" ? "text-[17px]" : "text-[15px]",
-          hideLabelOnMobile && "hidden min-[400px]:inline",
+          "transition-transform duration-200 group-hover:scale-[1.03] group-active:scale-95 dark:hidden",
+          sizeClass,
         )}
-      >
-        Keevo
-      </span>
+      />
     </Link>
   );
 }

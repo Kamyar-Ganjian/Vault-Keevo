@@ -25,6 +25,7 @@ export function Tooltip({
           className={cn(
             "z-50 rounded-md bg-ink px-2.5 py-1 text-xs font-medium text-app shadow-card ring-1 ring-line/50",
             "dark:bg-surface-4 dark:text-ink",
+            "data-[state=delayed-open]:animate-[tooltip-in_0.14s_ease-out]",
           )}
         >
           {content}

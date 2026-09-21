@@ -70,7 +70,7 @@ export function IconPicker({
             aria-label={def.label}
             aria-pressed={value === def.key}
             className={cn(
-              "flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg transition-colors",
+              "flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg transition-[background-color,color,transform] duration-150 active:scale-90",
               value === def.key
                 ? "bg-accent-soft text-accent-strong ring-1 ring-accent/20"
                 : "text-muted hover:bg-surface-2 hover:text-ink",

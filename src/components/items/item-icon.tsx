@@ -1,5 +1,5 @@
 import { getIconDef } from "@/lib/icons";
-import { accentTile, accentTileInk } from "@/lib/colors";
+import { accentTileInk } from "@/lib/colors";
 import { cn } from "@/lib/utils";
 import type { ItemAppearance } from "@/lib/types";
 
@@ -39,9 +39,9 @@ export function ItemIcon({
         className,
       )}
       style={{
-        background: accentTile(appearance.accent),
+        background: `linear-gradient(145deg, color-mix(in srgb, ${appearance.accent} 30%, var(--surface-2)), color-mix(in srgb, ${appearance.accent} 12%, var(--surface-2)))`,
         color: accentTileInk(appearance.accent),
-        boxShadow: `inset 0 0 0 1px color-mix(in srgb, ${appearance.accent} 14%, transparent)`,
+        boxShadow: `inset 0 1px 0 0 color-mix(in srgb, white 7%, transparent), inset 0 0 0 1px color-mix(in srgb, ${appearance.accent} 20%, transparent), 0 1px 2px 0 rgb(9 11 16 / 0.3)`,
       }}
     >
       <Icon aria-hidden />
