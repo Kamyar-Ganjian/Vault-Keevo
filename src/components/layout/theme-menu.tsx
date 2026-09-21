@@ -17,25 +17,43 @@ const OPTIONS: { value: Theme; label: string; Icon: typeof FiSun }[] = [
   { value: "system", label: "System", Icon: FiMonitor },
 ];
 
-export function ThemeMenu() {
+export function ThemeMenu({ full = false }: { full?: boolean }) {
   const { theme, setTheme } = useTheme();
+  const current = OPTIONS.find((o) => o.value === theme);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label="Change theme"
-          className="text-muted"
-        >
-          {theme === "dark" ? (
-            <FiMoon className="h-[18px] w-[18px]" />
-          ) : theme === "light" ? (
-            <FiSun className="h-[18px] w-[18px]" />
-          ) : (
-            <FiMonitor className="h-[18px] w-[18px]" />
-          )}
-        </Button>
+        {full ? (
+          <button
+            aria-label="Change theme"
+            className="flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13.5px] font-medium text-muted transition-colors hover:bg-surface-2 hover:text-ink"
+          >
+            {theme === "dark" ? (
+              <FiMoon className="h-[17px] w-[17px]" />
+            ) : theme === "light" ? (
+              <FiSun className="h-[17px] w-[17px]" />
+            ) : (
+              <FiMonitor className="h-[17px] w-[17px]" />
+            )}
+            <span className="flex-1">Theme</span>
+            <span className="text-xs font-normal text-faint">{current?.label}</span>
+          </button>
+        ) : (
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Change theme"
+            className="text-muted"
+          >
+            {theme === "dark" ? (
+              <FiMoon className="h-[18px] w-[18px]" />
+            ) : theme === "light" ? (
+              <FiSun className="h-[18px] w-[18px]" />
+            ) : (
+              <FiMonitor className="h-[18px] w-[18px]" />
+            )}
+          </Button>
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         {OPTIONS.map(({ value, label, Icon }) => (

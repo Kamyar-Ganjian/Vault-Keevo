@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { FiCheck, FiCopy } from "react-icons/fi";
-import { toast } from "sonner";
-import { Button, type ButtonProps } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export function CopyButton({
@@ -11,13 +9,12 @@ export function CopyButton({
   label = "Copy",
   copiedLabel = "Copied",
   className,
-  variant = "ghost",
-  ...props
 }: {
   value: string;
   label?: string;
   copiedLabel?: string;
-} & Omit<ButtonProps, "value" | "label">) {
+  className?: string;
+}) {
   const [copied, setCopied] = useState(false);
 
   async function copy() {
@@ -25,24 +22,33 @@ export function CopyButton({
     try {
       await navigator.clipboard.writeText(value);
     } catch {
-      toast.error("Could not copy to clipboard");
       return;
     }
     setCopied(true);
-    toast.success("Copied to clipboard");
     setTimeout(() => setCopied(false), 1600);
   }
 
   return (
-    <Button
-      variant={variant}
-      size="icon-sm"
+    <button
       onClick={copy}
       aria-label={copied ? copiedLabel : label}
-      className={cn("text-faint hover:text-ink", copied && "text-mint", className)}
-      {...props}
+      className={cn(
+        "inline-flex min-w-[64px] cursor-pointer items-center justify-end gap-1 text-[11px] font-medium transition-colors",
+        copied ? "text-mint" : "text-faint hover:text-ink",
+        className,
+      )}
     >
-      {copied ? <FiCheck className="h-3.5 w-3.5" /> : <FiCopy className="h-3.5 w-3.5" />}
-    </Button>
+      {copied ? (
+        <>
+          <FiCheck className="h-3 w-3" />
+          <span>{copiedLabel} ✓</span>
+        </>
+      ) : (
+        <>
+          <FiCopy className="h-3 w-3" />
+          <span>{label}</span>
+        </>
+      )}
+    </button>
   );
 }

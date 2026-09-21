@@ -9,7 +9,7 @@ export const Input = forwardRef<
     <input
       ref={ref}
       className={cn(
-        "h-9 w-full rounded-lg border border-line bg-surface-2 px-3 text-sm text-ink placeholder:text-faint",
+        "h-10 w-full rounded-lg border border-line bg-surface-2 px-3 text-sm text-ink placeholder:text-faint",
         "transition-colors focus-visible:bg-surface focus-visible:outline-none focus-visible:border-accent/60 focus-visible:ring-[3px] focus-visible:ring-accent/15",
         "disabled:cursor-not-allowed disabled:opacity-60",
         className,
@@ -22,7 +22,7 @@ export const Input = forwardRef<
 export const Textarea = forwardRef<
   HTMLTextAreaElement,
   TextareaHTMLAttributes<HTMLTextAreaElement>
->(function Textarea({ className, rows = 3, ...props }, ref) {
+>(function Textarea({ className, rows = 4, ...props }, ref) {
   return (
     <textarea
       ref={ref}
@@ -50,9 +50,7 @@ export function Label({
         {...props}
       />
       {error ? (
-        <span className="text-xs font-medium text-red-600 dark:text-red-400">
-          {error}
-        </span>
+        <span className="text-xs font-medium text-danger">{error}</span>
       ) : null}
     </div>
   );

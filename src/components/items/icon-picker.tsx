@@ -51,7 +51,7 @@ export function IconPicker({
               className={cn(
                 "cursor-pointer rounded-md px-2.5 py-1 text-xs font-medium transition-colors",
                 group === g.group
-                  ? "bg-surface text-ink shadow-sm"
+                  ? "bg-accent-soft text-accent-strong"
                   : "text-faint hover:text-muted",
               )}
             >
@@ -61,7 +61,7 @@ export function IconPicker({
         </div>
       </div>
 
-      <div className="mt-3 grid max-h-52 grid-cols-6 gap-1 overflow-y-auto rounded-xl border border-line bg-surface-2/40 p-2 scrollbar-thin sm:grid-cols-8 lg:grid-cols-8 xl:grid-cols-10">
+      <div className="mt-3 grid max-h-52 grid-cols-6 gap-1 overflow-y-auto rounded-xl bg-surface-2/40 p-2 ring-1 ring-line scrollbar-thin sm:grid-cols-8 lg:grid-cols-8 xl:grid-cols-10">
         {defs.map((def) => (
           <button
             key={def.key}
@@ -72,7 +72,7 @@ export function IconPicker({
             className={cn(
               "flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg transition-colors",
               value === def.key
-                ? "bg-accent text-accent-fg"
+                ? "bg-accent-soft text-accent-strong ring-1 ring-accent/20"
                 : "text-muted hover:bg-surface-2 hover:text-ink",
             )}
           >

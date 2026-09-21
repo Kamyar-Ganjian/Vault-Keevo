@@ -23,12 +23,12 @@ export function Tooltip({
           side={side}
           sideOffset={sideOffset}
           className={cn(
-            "z-50 rounded-md bg-neutral-900 px-2.5 py-1 text-xs font-medium text-neutral-50 shadow-md",
-            "dark:bg-neutral-100 dark:text-neutral-900",
+            "z-50 rounded-md bg-ink px-2.5 py-1 text-xs font-medium text-app shadow-card ring-1 ring-line/50",
+            "dark:bg-surface-4 dark:text-ink",
           )}
         >
           {content}
-          <TooltipPrimitive.Arrow className="fill-neutral-900 dark:fill-neutral-100" />
+          <TooltipPrimitive.Arrow className="fill-ink dark:fill-surface-4" />
         </TooltipPrimitive.Content>
       </TooltipPrimitive.Portal>
     </TooltipPrimitive.Root>

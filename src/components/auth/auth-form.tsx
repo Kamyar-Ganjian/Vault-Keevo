@@ -3,14 +3,14 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useForm, type Path } from "react-hook-form";
-import { FiEye, FiEyeOff, FiKey, FiLock, FiShield, FiZap } from "react-icons/fi";
+import { FiArchive, FiEye, FiEyeOff, FiLock, FiZap } from "react-icons/fi";
 import { toast } from "sonner";
 import { LoginInput, SignupInput, loginSchema, signupSchema } from "@/lib/schemas";
 import { loginAction, signupAction } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/kbd";
-import { Logo } from "@/components/layout/logo";
+import { Logo, KeevoMark } from "@/components/layout/logo";
 
 interface AuthValues {
   name: string;
@@ -73,11 +73,19 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
         <Logo href="/" />
       </header>
 
-      <div className="flex flex-1 items-center justify-center pb-16">
+      <div className="relative flex flex-1 items-center justify-center pb-16">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-72 bg-[radial-gradient(52%_100%_at_50%_0%,rgba(139,124,255,0.1),transparent)]"
+        />
+
         <div className="w-full max-w-md">
-          <div className="rounded-3xl border border-line bg-surface p-7 shadow-2xl sm:p-8">
-            <div className="mb-6 text-center">
-              <h1 className="text-xl font-semibold tracking-tight text-ink">
+          <div className="rounded-2xl bg-surface p-7 shadow-elev ring-1 ring-line-strong sm:p-8">
+            <div className="mb-6 flex flex-col items-center text-center">
+              <span className="grid h-12 w-12 place-items-center rounded-xl bg-accent text-accent-fg">
+                <KeevoMark className="h-6 w-6" />
+              </span>
+              <h1 className="mt-4 text-xl font-semibold tracking-tight text-ink">
                 {isLogin ? "Welcome back" : "Create your vault"}
               </h1>
               <p className="mt-1.5 text-sm text-muted">
@@ -90,7 +98,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
             {serverError ? (
               <div
                 role="alert"
-                className="mb-4 rounded-xl border border-red-500/20 bg-red-500/5 px-3.5 py-2.5 text-[13px] font-medium text-red-600 dark:text-red-400"
+                className="mb-4 rounded-xl border border-danger/25 bg-danger/5 px-3.5 py-2.5 text-[13px] font-medium text-danger"
               >
                 {serverError}
               </div>
@@ -219,15 +227,15 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           {!isLogin ? (
             <div className="mt-6 grid grid-cols-3 gap-2 sm:gap-3">
               <Feature icon={FiZap} label="Instant access" />
-              <Feature icon={FiLock} label="Encrypted fields" />
-              <Feature icon={FiShield} label="Yours only" />
+              <Feature icon={FiLock} label="Encrypted at rest" />
+              <Feature icon={FiArchive} label="In one safe place" />
             </div>
           ) : null}
         </div>
       </div>
 
       <footer className="flex items-center justify-center gap-1.5 pb-8 text-[11px] text-faint">
-        <FiKey className="h-3 w-3" />
+        <KeevoMark className="h-3 w-3" />
         Keevo — your personal vault
       </footer>
     </div>
@@ -242,8 +250,10 @@ function Feature({
   label: string;
 }) {
   return (
-    <div className="flex flex-col items-center gap-1.5 rounded-xl border border-line bg-surface/60 px-2 py-3 text-center">
-      <Icon className="h-4 w-4 text-accent" />
+    <div className="flex flex-col items-center gap-1.5 rounded-xl bg-surface px-2 py-3.5 text-center ring-1 ring-line">
+      <span className="grid h-7 w-7 place-items-center rounded-lg bg-accent-soft text-accent-strong">
+        <Icon className="h-4 w-4" />
+      </span>
       <span className="text-[11px] font-medium text-muted">{label}</span>
     </div>
   );

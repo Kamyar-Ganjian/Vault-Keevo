@@ -23,36 +23,32 @@ export function FieldDisplay({
   const show = sensitive ? revealed || forceReveal : true;
 
   return (
-    <div className="group rounded-xl border border-line bg-surface p-3.5 transition-colors hover:border-line-strong">
+    <div className="px-5 py-4">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[11px] font-semibold uppercase tracking-wide text-faint">
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-faint">
           {name}
         </span>
-        {sensitive && value ? (
-          <button
-            onClick={() => setRevealed((r) => !r)}
-            className="flex cursor-pointer items-center gap-1.5 rounded-md px-1.5 py-0.5 text-[11px] font-medium text-faint transition-colors hover:text-ink"
-          >
-            {show ? (
-              <>
-                <FiEyeOff className="h-3 w-3" /> Hide
-              </>
-            ) : (
-              <>
-                <FiEye className="h-3 w-3" /> Reveal
-              </>
-            )}
-          </button>
-        ) : null}
+        <div className="flex items-center gap-2.5">
+          {value && !["toggle", "url"].includes(type) ? (
+            <CopyButton value={value} />
+          ) : null}
+          {sensitive && value ? (
+            <button
+              onClick={() => setRevealed((r) => !r)}
+              className="flex cursor-pointer items-center gap-1 rounded-md px-0.5 text-[11px] font-medium text-faint transition-colors hover:text-ink"
+              aria-pressed={show}
+            >
+              {show ? <FiEyeOff className="h-3 w-3" /> : <FiEye className="h-3 w-3" />}
+              <span>{show ? "Hide" : "Reveal"}</span>
+            </button>
+          ) : null}
+        </div>
       </div>
 
       <div className="mt-1.5 flex items-center gap-2">
         <div className="min-w-0 flex-1">
           <ValueBody type={type} value={value} show={show} />
         </div>
-        {value && !["toggle", "url"].includes(type) ? (
-          <CopyButton value={value} />
-        ) : null}
       </div>
     </div>
   );
@@ -78,25 +74,25 @@ function ValueBody({
         href={href}
         target="_blank"
         rel="noreferrer noopener"
-        className="inline-flex max-w-full items-center gap-1.5 truncate rounded-lg border border-line bg-surface-2 px-2.5 py-1 text-[13px] font-medium text-accent transition-colors hover:border-line-strong"
+        className="inline-flex max-w-full items-center gap-1.5 truncate rounded-md border border-line bg-surface-2 px-2 py-0.5 font-mono text-[12.5px] font-medium text-accent-strong transition-colors hover:border-line-strong hover:text-accent"
       >
         <span className="truncate">{value}</span>
         <FiExternalLink className="h-3 w-3 shrink-0" />
       </a>
     ) : (
-      <p className="truncate text-[13px] leading-relaxed text-ink">{value}</p>
+      <p className="truncate font-mono text-[12.5px] text-ink">{value}</p>
     );
   }
 
   if (!show) {
     return (
       <span className="flex items-center gap-1.5 py-0.5">
-        {new Array(Math.min(value.length, 14)).fill(0).map((_, i) => (
+        {new Array(Math.min(value.length, 18)).fill(0).map((_, i) => (
           <span
             key={i}
             className={cn(
-              "h-2 w-1.5 rounded-sm bg-line-strong",
-              type === "code" && "bg-line-strong/70",
+              "h-2 w-1.5 rounded-sm",
+              type === "code" ? "bg-line-strong/70" : "bg-line-strong",
             )}
           />
         ))}

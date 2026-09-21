@@ -113,7 +113,7 @@ function SearchPalette({ onClose }: { onClose: () => void }) {
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.98, y: -6 }}
         transition={{ type: "spring", duration: 0.32, bounce: 0.16 }}
-        className="relative w-full max-w-xl overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl"
+        className="relative w-full max-w-xl overflow-hidden rounded-2xl bg-surface-4/90 shadow-elev ring-1 ring-line-strong backdrop-blur-2xl"
       >
         <div className="flex items-center gap-3 border-b border-line px-4">
           {loading ? (
@@ -174,7 +174,7 @@ function SearchPalette({ onClose }: { onClose: () => void }) {
                     className={cn(
                       "group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors",
                       index === active
-                        ? "bg-surface-2"
+                        ? "bg-accent-soft ring-1 ring-inset ring-accent/20"
                         : "hover:bg-surface-2/60",
                     )}
                   >
@@ -204,7 +204,7 @@ function SearchPalette({ onClose }: { onClose: () => void }) {
           )}
         </div>
 
-        <div className="flex items-center gap-4 border-t border-line bg-surface-2/50 px-4 py-2.5 text-[11px] text-faint">
+        <div className="flex items-center gap-4 border-t border-line bg-surface-2/60 px-4 py-2.5 text-[11px] text-faint">
           <span className="flex items-center gap-1.5">
             <Kbd>↑</Kbd>
             <Kbd>↓</Kbd> navigate

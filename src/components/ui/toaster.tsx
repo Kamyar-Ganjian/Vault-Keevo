@@ -13,10 +13,11 @@ export function Toaster() {
       closeButton
       toastOptions={{
         style: {
-          borderRadius: "12px",
-          border: "1px solid var(--line)",
-          background: "var(--surface)",
+          borderRadius: "10px",
+          border: "1px solid var(--line-strong)",
+          background: "var(--surface-3)",
           color: "var(--ink)",
+          boxShadow: "var(--shadow-elev)",
         },
       }}
     />

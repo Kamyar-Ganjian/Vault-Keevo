@@ -28,8 +28,12 @@ export function isValidHex(color: string): boolean {
   return /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(color);
 }
 
-export function accentGradient(accent: string): string {
-  return `linear-gradient(140deg, color-mix(in oklab, ${accent} 82%, white 14%) 0%, ${accent} 100%)`;
+export function accentTile(accent: string): string {
+  return `color-mix(in srgb, ${accent} 20%, var(--surface-2))`;
+}
+
+export function accentTileInk(accent: string): string {
+  return `color-mix(in srgb, ${accent} 78%, var(--ink))`;
 }
 
 export function accentSoft(accent: string): string {

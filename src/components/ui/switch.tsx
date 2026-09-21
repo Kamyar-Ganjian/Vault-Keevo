@@ -11,7 +11,7 @@ export const Switch = forwardRef<
       ref={ref}
       className={cn(
         "relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border border-transparent transition-colors",
-        "outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-app",
+        "outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:ring-offset-2 focus-visible:ring-offset-app",
         "data-[state=checked]:bg-accent data-[state=unchecked]:bg-line-strong",
         className,
       )}

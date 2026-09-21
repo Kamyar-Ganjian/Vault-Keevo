@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { FiArrowRight, FiKey, FiPlus, FiStar } from "react-icons/fi";
+import { FiArchive, FiArrowRight, FiPlus, FiStar } from "react-icons/fi";
 import { ItemCard } from "@/components/vault/item-card";
 import type { ItemCardData, Category } from "@/lib/types";
 import { CATEGORIES } from "@/lib/types";
@@ -38,21 +38,20 @@ export function VaultDashboard({ items }: { items: ItemCardData[] }) {
 
   if (everythingEmpty) {
     return (
-      <div className="flex flex-col items-center py-24 text-center">
-        <div className="grid h-16 w-16 place-items-center rounded-2xl bg-surface shadow-sm ring-1 ring-line">
-          <FiKey className="h-7 w-7 text-faint" />
-        </div>
-        <h2 className="mt-5 text-lg font-semibold tracking-tight text-ink">
+      <div className="flex flex-col items-center py-20 text-center">
+        <span className="grid h-12 w-12 place-items-center rounded-xl bg-surface-3 text-accent ring-1 ring-line-strong">
+          <FiArchive className="h-5.5 w-5.5" />
+        </span>
+        <h2 className="mt-5 text-xl font-semibold tracking-tight text-ink">
           Your vault is empty
         </h2>
-        <p className="mt-1.5 max-w-sm text-sm text-muted">
+        <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted">
           Keevo is where you keep the things you use every day. Add your first
-          item — an account, a server, a domain — and give it fields, a color
-          and a shape.
+          item — an account, a server, a domain — and give it a name.
         </p>
         <Link
           href="/vault/new"
-          className="mt-6 inline-flex h-11 items-center gap-2 rounded-full px-6 text-sm font-semibold text-white brand-gradient shadow-[0_8px_24px_-8px_rgba(99,102,241,0.7)] transition-transform hover:scale-[1.02] active:scale-[0.99]"
+          className="mt-7 inline-flex h-10 items-center gap-2 rounded-lg bg-accent px-5 text-sm font-medium text-accent-fg transition-colors hover:bg-accent-strong"
         >
           <FiPlus className="h-4 w-4" />
           Create your first item
@@ -63,8 +62,8 @@ export function VaultDashboard({ items }: { items: ItemCardData[] }) {
 
   return (
     <div>
-      <div className="sticky top-14 z-30 -mx-4 bg-app/80 px-4 py-3 backdrop-blur-md sm:-mx-6 sm:px-6">
-        <div className="scrollbar-none -mx-2 flex gap-1.5 overflow-x-auto px-2 pb-0.5">
+      <div className="sticky top-14 z-30 -mx-4 mb-1 border-b border-line bg-app px-4 py-2.5 lg:top-0 sm:-mx-6 sm:px-6">
+        <div className="scrollbar-none -mx-2 flex gap-1 overflow-x-auto px-2 py-1">
           {(["all", ...CATEGORIES.map((c) => c.value)] as Tab[]).map((value) => {
             const active = tab === value;
             return (
@@ -72,15 +71,15 @@ export function VaultDashboard({ items }: { items: ItemCardData[] }) {
                 key={value}
                 onClick={() => setTab(value)}
                 className={cn(
-                  "relative flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] font-medium transition-colors",
-                  active ? "text-white" : "text-muted hover:text-ink",
+                  "relative flex shrink-0 cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-[13px] font-medium transition-colors",
+                  active ? "text-ink" : "text-muted hover:text-ink",
                 )}
               >
-{active ? (
+                {active ? (
                   <motion.span
                     layoutId="vault-tab"
-                    className="absolute inset-0 rounded-full brand-gradient shadow-[0_2px_10px_-2px_rgba(99,102,241,0.5)]"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
+                    className="absolute inset-0 rounded-lg bg-accent-soft ring-1 ring-accent/15"
+                    transition={{ type: "spring", bounce: 0.15, duration: 0.35 }}
                   />
                 ) : null}
                 <span className="relative capitalize text-current">
@@ -88,8 +87,8 @@ export function VaultDashboard({ items }: { items: ItemCardData[] }) {
                 </span>
                 <span
                   className={cn(
-                    "relative rounded-full px-1.5 py-px text-[11px] tabular-nums",
-                    active ? "bg-white/20 text-white" : "bg-surface-2 text-faint",
+                    "relative rounded-md px-1.5 py-px text-[11px] tabular-nums",
+                    active ? "bg-accent/15 text-accent-strong" : "text-faint",
                   )}
                 >
                   {counts.get(value) ?? 0}
@@ -100,29 +99,41 @@ export function VaultDashboard({ items }: { items: ItemCardData[] }) {
         </div>
       </div>
 
-      <div className="pt-2">
+      <div className="pt-4">
         {tab === "all" && favorites.length > 0 ? (
-          <section className="mt-4">
-            <h3 className="flex items-center gap-2 text-[13px] font-semibold text-muted">
-              <FiStar className="h-3.5 w-3.5 text-amber-400" />
+          <section>
+            <h3 className="flex items-center gap-2 text-[13px] font-semibold tracking-wide text-muted">
+              <FiStar className="h-3.5 w-3.5 text-amber-500" />
               Favorites
             </h3>
-            <div className={cn("mt-2.5", GRID)}>
-              {favorites.map((item) => (
-                <ItemCard key={item.id} item={item} />
+            <div className={cn("mt-3", GRID)}>
+              {favorites.map((item, i) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    delay: Math.min(i * 0.04, 0.3),
+                    duration: 0.35,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                >
+                  <ItemCard item={item} />
+                </motion.div>
               ))}
             </div>
           </section>
         ) : null}
 
-        <section className={cn(favorites.length > 0 && tab === "all" && "mt-7")}>
-          <h3 className="flex items-center gap-2 text-[13px] font-semibold text-muted">
-            {(favorites.length > 0 && tab === "all" ? "All items" : "Items").toUpperCase()}
+        <section className={cn(favorites.length > 0 && tab === "all" && "mt-8")}>
+          <h3 className="flex items-center gap-2.5 text-[13px] font-semibold tracking-wide text-muted">
+            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+            {favorites.length > 0 && tab === "all" ? "All items" : "Items"}
             <span className="h-px flex-1 bg-line" />
             {tab !== "all" ? (
               <button
                 onClick={() => setTab("all")}
-                className="flex cursor-pointer items-center gap-1 text-[12px] font-medium text-accent"
+                className="flex cursor-pointer items-center gap-1 text-[12px] font-medium text-accent transition-opacity hover:opacity-80"
               >
                 View all <FiArrowRight className="h-3 w-3" />
               </button>
@@ -130,8 +141,11 @@ export function VaultDashboard({ items }: { items: ItemCardData[] }) {
           </h3>
 
           {visible.length === 0 ? (
-            <div className="mt-4 flex flex-col items-center rounded-2xl border border-dashed border-line-strong bg-surface-3/40 py-14 text-center">
-              <p className="text-sm font-medium text-muted">
+            <div className="mt-4 flex flex-col items-center rounded-xl border border-dashed border-line-strong bg-surface-3/40 py-14 text-center">
+              <span className="grid h-10 w-10 place-items-center rounded-lg bg-surface-3 text-faint ring-1 ring-line">
+                <FiArchive className="h-4.5 w-4.5" />
+              </span>
+              <p className="mt-3 text-sm font-medium text-muted">
                 Nothing here yet
               </p>
               <p className="mt-1 text-xs text-faint">
@@ -139,9 +153,20 @@ export function VaultDashboard({ items }: { items: ItemCardData[] }) {
               </p>
             </div>
           ) : (
-            <div className={cn("mt-2.5", GRID)}>
-              {visible.map((item) => (
-                <ItemCard key={item.id} item={item} />
+            <div className={cn("mt-3", GRID)}>
+              {visible.map((item, i) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    delay: Math.min(i * 0.04, 0.3),
+                    duration: 0.35,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                >
+                  <ItemCard item={item} />
+                </motion.div>
               ))}
             </div>
           )}

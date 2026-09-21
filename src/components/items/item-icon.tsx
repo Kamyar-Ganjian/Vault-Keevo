@@ -1,5 +1,5 @@
 import { getIconDef } from "@/lib/icons";
-import { accentGradient } from "@/lib/colors";
+import { accentTile, accentTileInk } from "@/lib/colors";
 import { cn } from "@/lib/utils";
 import type { ItemAppearance } from "@/lib/types";
 
@@ -33,14 +33,15 @@ export function ItemIcon({
   return (
     <span
       className={cn(
-        "grid shrink-0 select-none place-items-center text-white",
+        "grid shrink-0 select-none place-items-center",
         SHAPES[appearance.iconShape],
         SIZES[size],
         className,
       )}
       style={{
-        background: accentGradient(appearance.accent),
-        boxShadow: `0 1px 2px 0 color-mix(in srgb, ${appearance.accent} 35%, transparent), inset 0 1px 0 0 color-mix(in srgb, white 14%, transparent)`,
+        background: accentTile(appearance.accent),
+        color: accentTileInk(appearance.accent),
+        boxShadow: `inset 0 0 0 1px color-mix(in srgb, ${appearance.accent} 14%, transparent)`,
       }}
     >
       <Icon aria-hidden />

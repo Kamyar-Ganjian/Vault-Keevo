@@ -19,9 +19,11 @@ import { initials } from "@/lib/utils";
 export function UserMenu({
   name,
   email,
+  full = false,
 }: {
   name: string | null;
   email: string;
+  full?: boolean;
 }) {
   const router = useRouter();
 
@@ -36,16 +38,29 @@ export function UserMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-muted"
-          aria-label="Account menu"
-        >
-          <span className="grid h-7 w-7 place-items-center rounded-full bg-surface-2 text-xs font-semibold text-muted ring-1 ring-line transition-colors group-hover:text-ink">
-            {initials(name ?? email) || "K"}
-          </span>
-        </Button>
+        {full ? (
+          <button className="flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-surface-2">
+            <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-accent-soft text-[11px] font-semibold text-accent-strong">
+              {initials(name ?? email) || "K"}
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-[13.5px] font-medium text-ink">
+                {name ?? "Account"}
+              </span>
+            </span>
+          </button>
+        ) : (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-muted"
+            aria-label="Account menu"
+          >
+            <span className="grid h-7 w-7 place-items-center rounded-full bg-accent-soft text-xs font-semibold text-accent-strong ring-1 ring-accent/25">
+              {initials(name ?? email) || "K"}
+            </span>
+          </Button>
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent className="min-w-[200px]">
         <DropdownMenuLabel className="font-medium">
@@ -66,7 +81,7 @@ export function UserMenu({
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onSelect={handleLogout}
-          className="text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400"
+          className="text-danger focus:text-danger"
         >
           <FiLogOut className="h-4 w-4" />
           Sign out

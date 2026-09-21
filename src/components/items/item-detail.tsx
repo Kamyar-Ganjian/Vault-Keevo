@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { FiCalendar, FiCopy, FiEdit2, FiMoreHorizontal, FiPlus, FiStar, FiTrash2 } from "react-icons/fi";
 import { toast } from "sonner";
 
@@ -26,6 +27,11 @@ import {
 } from "@/lib/actions/items";
 import type { ItemDetailData } from "@/lib/types";
 import { cn, formatDate } from "@/lib/utils";
+
+const ENTER = {
+  initial: { opacity: 0, y: 8, scale: 0.985 },
+  animate: { opacity: 1, y: 0, scale: 1 },
+} as const;
 
 export function ItemDetail({ item }: { item: ItemDetailData }) {
   const router = useRouter();
@@ -76,7 +82,7 @@ export function ItemDetail({ item }: { item: ItemDetailData }) {
   }
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-20 pt-6 sm:px-6">
+    <main className="mx-auto max-w-2xl px-4 pb-20 pt-6 sm:px-6 lg:pt-10">
       <div className="flex items-center justify-between gap-3">
         <Link
           href="/vault"
@@ -84,89 +90,98 @@ export function ItemDetail({ item }: { item: ItemDetailData }) {
         >
           ← Vault
         </Link>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Item actions"
-              className="text-muted"
-            >
-              <FiMoreHorizontal className="h-5 w-5" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem asChild>
-              <Link href={`/vault/items/${item.id}/edit`}>
-<FiEdit2 className="h-4 w-4" />
-              Edit item
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={duplicate}>
-              <FiCopy className="h-4 w-4" />
-              Duplicate
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => setDeleteOpen(true)}
-              className="text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400"
-            >
-              <FiTrash2 className="h-4 w-4" />
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex items-center gap-1">
+          <Button asChild variant="ghost" size="sm" className="text-muted">
+            <Link href={`/vault/items/${item.id}/edit`}>
+              <FiEdit2 className="h-3.5 w-3.5" />
+              Edit
+            </Link>
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label="More actions"
+                className="text-muted"
+              >
+                <FiMoreHorizontal className="h-[18px] w-[18px]" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={duplicate}>
+                <FiCopy className="h-4 w-4" />
+                Duplicate
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => setDeleteOpen(true)}
+                className="text-danger focus:text-danger"
+              >
+                <FiTrash2 className="h-4 w-4" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
-      <div className="mt-4 overflow-hidden rounded-3xl border border-line bg-surface">
+      <motion.section
+        {...ENTER}
+        transition={{ type: "spring", duration: 0.5, bounce: 0.08 }}
+        className="mt-5 overflow-hidden rounded-xl bg-surface ring-1 ring-line"
+      >
         {item.appearance.banner !== "none" ? (
           <div
             aria-hidden
-            className="h-16 w-full sm:h-24"
+            className="h-12 w-full sm:h-16"
             style={{
               background:
                 item.appearance.banner === "gradient"
-                  ? `radial-gradient(120% 160% at 15% 0%, color-mix(in srgb, ${item.appearance.accent} 42%, transparent), transparent 60%), linear-gradient(160deg, color-mix(in srgb, ${item.appearance.accent} 16%, transparent), transparent 55%)`
-                  : `linear-gradient(150deg, color-mix(in srgb, ${item.appearance.accent} 22%, transparent), transparent 70%)`,
+                  ? `linear-gradient(120deg, color-mix(in srgb, ${item.appearance.accent} 36%, transparent), color-mix(in srgb, ${item.appearance.accent} 12%, transparent))`
+                  : `color-mix(in srgb, ${item.appearance.accent} 16%, transparent)`,
             }}
           />
         ) : null}
 
-        <div
-          className={cn("px-5 sm:px-7", item.appearance.banner !== "none" ? "pb-6" : "pt-6 pb-6")}
-        >
+        <div className="px-5 pb-6 pt-6 sm:px-6">
           <div className="flex items-center gap-4">
-            <ItemIcon icon={item.icon} appearance={item.appearance} size="hero" />
+            <motion.span
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: "spring", duration: 0.55, bounce: 0.12, delay: 0.05 }}
+            >
+              <ItemIcon icon={item.icon} appearance={item.appearance} size="hero" />
+            </motion.span>
             <div className="min-w-0 flex-1">
-              <h1 className="truncate text-2xl font-semibold tracking-tight text-ink">
+              <h1 className="truncate text-2xl font-semibold tracking-tight text-ink sm:text-[28px]">
                 {item.name}
               </h1>
-              <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
-                <p className="truncate text-sm text-muted">
-                  {item.description || "Kept safe in your vault"}
-                </p>
-              </div>
+              <p className="mt-1 truncate text-sm text-muted">
+                {item.description || "Kept safe in your vault"}
+              </p>
             </div>
             <button
               onClick={toggleFavorite}
               aria-label={favorite ? "Remove from favorites" : "Add to favorites"}
               aria-pressed={favorite}
               className={cn(
-                "grid h-10 w-10 shrink-0 cursor-pointer place-items-center rounded-full border transition-colors",
+                "grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-lg transition-colors",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40",
                 favorite
-                  ? "border-amber-200 bg-amber-50 text-amber-500 dark:border-amber-400/30 dark:bg-amber-400/10"
-                  : "border-line bg-surface-2 text-faint hover:text-muted",
+                  ? "bg-amber-400/15 text-amber-500 ring-1 ring-amber-400/20"
+                  : "bg-surface-2 text-faint hover:text-muted",
               )}
             >
-              <FiStar className={cn("h-[18px] w-[18px]", favorite && "fill-current")} />
+              <FiStar className={cn("h-[17px] w-[17px]", favorite && "fill-current")} />
             </button>
           </div>
 
-          <div className="mt-5 flex flex-wrap items-center gap-2 text-xs text-faint">
-            <span className="inline-flex items-center rounded-full border border-line bg-surface-2 px-2.5 py-1 capitalize font-medium text-muted">
+          <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-line pt-4 text-xs text-muted">
+            <span className="inline-flex items-center rounded-md bg-surface-2 px-2 py-0.5 capitalize font-medium ring-1 ring-line">
               {item.category}
             </span>
-            <span className="inline-flex items-center gap-1.5">
+            <span className="inline-flex items-center gap-1.5 text-faint">
               <FiCalendar className="h-3 w-3" />
               Updated {formatDate(item.updatedAt)}
             </span>
@@ -176,7 +191,7 @@ export function ItemDetail({ item }: { item: ItemDetailData }) {
                   ·
                 </span>
                 {item.fieldCount > 0 && (
-                  <span>
+                  <span className="inline-flex items-center gap-1.5 text-faint">
                     {item.fieldCount} {item.fieldCount === 1 ? "field" : "fields"}
                   </span>
                 )}
@@ -192,31 +207,38 @@ export function ItemDetail({ item }: { item: ItemDetailData }) {
             )}
           </div>
         </div>
-      </div>
+      </motion.section>
 
       {item.fields.length > 0 ? (
-        <section className="mt-6">
-          <h2 className="flex items-center gap-2 text-[13px] font-semibold text-muted">
+        <section className="mt-8">
+          <h2 className="flex items-center gap-2.5 text-[13px] font-semibold tracking-wide text-muted">
+            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
             Fields
             <span className="h-px flex-1 bg-line" />
           </h2>
-          <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
-            {item.fields.map((field) => (
-              <FieldDisplay
+          <div className="mt-3 divide-y divide-line overflow-hidden rounded-xl bg-surface ring-1 ring-line">
+            {item.fields.map((field, i) => (
+              <motion.div
                 key={field.id ?? field.name}
-                name={field.name || "Field"}
-                type={field.type}
-                value={field.value}
-                forceReveal={forceReveal}
-              />
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05 + Math.min(i * 0.04, 0.3), duration: 0.25 }}
+              >
+                <FieldDisplay
+                  name={field.name || "Field"}
+                  type={field.type}
+                  value={field.value}
+                  forceReveal={forceReveal}
+                />
+              </motion.div>
             ))}
           </div>
         </section>
       ) : (
-        <section className="mt-6">
+        <section className="mt-8">
           <Link
             href={`/vault/items/${item.id}/edit`}
-            className="flex items-center justify-center gap-2 rounded-2xl border border-dashed border-line-strong bg-surface-3/40 py-8 text-sm font-medium text-muted transition-colors hover:border-accent/50 hover:text-accent"
+            className="flex items-center justify-center gap-2 rounded-xl border border-dashed border-line-strong bg-surface-3/40 py-9 text-sm font-medium text-muted transition-colors hover:border-accent/50 hover:bg-accent/5 hover:text-accent"
           >
             <FiPlus className="h-4 w-4" />
             Add fields to this item
@@ -225,12 +247,13 @@ export function ItemDetail({ item }: { item: ItemDetailData }) {
       )}
 
       {item.notes ? (
-        <section className="mt-6">
-          <h2 className="flex items-center gap-2 text-[13px] font-semibold text-muted">
+        <section className="mt-8">
+          <h2 className="flex items-center gap-2.5 text-[13px] font-semibold tracking-wide text-muted">
+            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
             Notes
             <span className="h-px flex-1 bg-line" />
           </h2>
-          <div className="mt-3 rounded-2xl border border-line bg-surface p-4">
+          <div className="mt-3 rounded-xl bg-surface px-5 py-4 ring-1 ring-line">
             <p className="whitespace-pre-wrap text-[13px] leading-relaxed text-ink">
               {item.notes}
             </p>
@@ -238,7 +261,7 @@ export function ItemDetail({ item }: { item: ItemDetailData }) {
         </section>
       ) : null}
 
-      <div className="mt-6 flex items-center justify-center gap-4 text-[11px] text-faint">
+      <div className="mt-10 flex items-center justify-center gap-4 text-[11px] text-faint">
         <span className="inline-flex items-center gap-1.5">
           <FiCalendar className="h-3 w-3" />
           Created {formatDate(item.createdAt)}
@@ -246,27 +269,27 @@ export function ItemDetail({ item }: { item: ItemDetailData }) {
       </div>
 
       <Dialog
-          open={deleteOpen}
-          onOpenChange={setDeleteOpen}
-          size="sm"
-          title={`Delete “${item.name}”?`}
-          description="This permanently removes the item and all of its saved fields. This action can’t be undone."
-          footer={
-            <>
-              <Button
-                variant="secondary"
-                onClick={() => setDeleteOpen(false)}
-                disabled={busy}
-              >
-                Cancel
-              </Button>
-              <Button variant="danger" onClick={confirmDelete} disabled={busy}>
-                <FiTrash2 className="h-4 w-4" />
-                Delete item
-              </Button>
-            </>
-          }
-        />
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        size="sm"
+        title={`Delete “${item.name}”?`}
+        description="This permanently removes the item and all of its saved fields. This action can’t be undone."
+        footer={
+          <>
+            <Button
+              variant="secondary"
+              onClick={() => setDeleteOpen(false)}
+              disabled={busy}
+            >
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={confirmDelete} disabled={busy}>
+              <FiTrash2 className="h-4 w-4" />
+              Delete item
+            </Button>
+          </>
+        }
+      />
     </main>
   );
 }

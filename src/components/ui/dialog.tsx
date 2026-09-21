@@ -44,7 +44,7 @@ export function Dialog({
           <DialogPrimitive.Portal forceMount>
             <DialogPrimitive.Overlay asChild forceMount>
               <motion.div
-                className="fixed inset-0 z-50 bg-black/40 backdrop-blur-[2px]"
+                className="fixed inset-0 z-50 bg-black/55"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -60,7 +60,7 @@ export function Dialog({
                   exit={{ opacity: 0, scale: 0.97, y: 6 }}
                   transition={{ type: "spring", duration: 0.35, bounce: 0.15 }}
                   className={cn(
-                    "relative w-full rounded-2xl border border-line bg-surface shadow-2xl",
+                    "relative w-full rounded-2xl bg-surface-3 shadow-elev ring-1 ring-line-strong",
                     "outline-none",
                     SIZES[size],
                     className,
@@ -70,7 +70,7 @@ export function Dialog({
                     <DialogPrimitive.Close asChild>
                       <button
                         aria-label="Close"
-                        className="absolute right-4 top-4 z-10 grid h-8 w-8 cursor-pointer place-items-center rounded-lg text-faint transition-colors hover:bg-surface-2 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
+                        className="absolute right-4 top-4 z-10 grid h-8 w-8 cursor-pointer place-items-center rounded-lg text-faint transition-colors hover:bg-surface-2 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
                       >
                         <FiX className="h-4 w-4" />
                       </button>

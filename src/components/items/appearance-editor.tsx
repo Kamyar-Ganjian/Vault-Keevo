@@ -74,9 +74,9 @@ export function AppearanceEditor({
               aria-pressed={value.accent === color.value}
               className={cn(
                 "h-7 w-7 cursor-pointer rounded-full transition-transform hover:scale-110",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-app",
                 value.accent === color.value &&
-                  "ring-2 ring-neutral-800 ring-offset-2 ring-offset-surface dark:ring-neutral-100",
+                  "ring-2 ring-accent ring-offset-2 ring-offset-app",
               )}
               style={{ background: color.value }}
             />
@@ -86,7 +86,7 @@ export function AppearanceEditor({
               "relative h-7 w-7 cursor-pointer overflow-hidden rounded-full border border-line bg-surface-2",
               value.accent !== "" &&
                 !ACCENT_COLORS.some((c) => c.value === value.accent) &&
-                "ring-2 ring-neutral-800 ring-offset-2 ring-offset-surface dark:ring-neutral-100",
+                "ring-2 ring-accent ring-offset-2 ring-offset-app",
             )}
             title="Custom color"
           >
@@ -125,7 +125,7 @@ export function AppearanceEditor({
               className={cn(
                 "flex cursor-pointer flex-col items-center gap-1.5 rounded-xl border px-3 py-2.5 transition-colors",
                 value.iconShape === shape.value
-                  ? "border-accent/60 bg-accent/10"
+                  ? "border-accent/50 bg-accent-soft"
                   : "border-line bg-surface-2/60 hover:border-line-strong",
               )}
             >
@@ -134,7 +134,7 @@ export function AppearanceEditor({
                 className={cn(
                   "text-xs",
                   value.iconShape === shape.value
-                    ? "font-medium text-accent"
+                    ? "font-medium text-accent-strong"
                     : "text-muted",
                 )}
               >
@@ -157,7 +157,7 @@ export function AppearanceEditor({
               className={cn(
                 "cursor-pointer overflow-hidden rounded-xl border transition-colors",
                 value.banner === banner.value
-                  ? "border-accent/60"
+                  ? "border-accent/50"
                   : "border-line hover:border-line-strong",
               )}
             >
@@ -176,7 +176,7 @@ export function AppearanceEditor({
                 className={cn(
                   "block py-1.5 text-xs",
                   value.banner === banner.value
-                    ? "font-medium text-accent"
+                    ? "font-medium text-accent-strong"
                     : "text-muted",
                 )}
               >

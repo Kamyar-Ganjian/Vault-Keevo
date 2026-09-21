@@ -30,7 +30,7 @@ function FieldIcon({ type, className }: { type: FieldType; className?: string })
   return <Icon className={className} />;
 }
 
-function SectionCard({
+function Section({
   title,
   hint,
   children,
@@ -40,9 +40,13 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-2xl border border-line bg-surface p-5">
-      <h2 className="text-sm font-semibold tracking-tight text-ink">{title}</h2>
-      {hint ? <p className="mt-0.5 text-xs text-faint">{hint}</p> : null}
+    <section>
+      <h2 className="flex items-center gap-2.5 text-[13px] font-semibold tracking-wide text-muted">
+        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+        {title}
+        <span className="h-px flex-1 bg-line" />
+      </h2>
+      {hint ? <p className="mt-1 text-xs text-faint">{hint}</p> : null}
       <div className="mt-4">{children}</div>
     </section>
   );
@@ -173,14 +177,14 @@ export function ItemForm({
       </div>
 
       {fieldErrorName ? (
-        <p className="mt-4 rounded-lg border border-red-500/20 bg-red-500/5 px-3 py-2 text-xs font-medium text-red-600 dark:text-red-400">
+        <p className="mt-4 rounded-lg border border-danger/25 bg-danger/5 px-3 py-2 text-xs font-medium text-danger">
           {fieldErrorName}
         </p>
       ) : null}
 
-      <div className="mt-6 grid items-start gap-6 lg:grid-cols-[1fr_360px]">
-        <div className="space-y-6">
-          <SectionCard title="Basics">
+      <div className="mt-7 grid items-start gap-8 lg:grid-cols-[1fr_360px]">
+        <div className="space-y-9">
+          <Section title="Basics">
             <div className="space-y-4">
               <div>
                 <Label htmlFor="name" error={errors.name?.message}>
@@ -238,9 +242,9 @@ export function ItemForm({
                 </div>
               </div>
             </div>
-          </SectionCard>
+          </Section>
 
-          <SectionCard title="Icon">
+          <Section title="Icon">
             <Controller
               control={control}
               name="icon"
@@ -248,9 +252,9 @@ export function ItemForm({
                 <IconPicker value={field.value} onChange={field.onChange} />
               )}
             />
-          </SectionCard>
+          </Section>
 
-          <SectionCard
+          <Section
             title={`Fields (${fields.length}${fields.length >= 100 ? ", max 100" : ""})`}
             hint="Custom fields with a type, a name and a value. Secret and code values are encrypted."
           >
@@ -269,7 +273,7 @@ export function ItemForm({
                     initial={{ opacity: 0, y: 4 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.15 }}
-                    className="rounded-xl border border-line bg-surface-3/50 p-3"
+                    className="rounded-xl bg-surface-2/50 p-3 ring-1 ring-line"
                   >
                     <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                       <FieldIcon
@@ -324,7 +328,7 @@ export function ItemForm({
                           type="button"
                           onClick={() => remove(index)}
                           aria-label="Remove field"
-                          className="grid h-8 w-8 cursor-pointer place-items-center rounded-lg text-faint transition-colors hover:bg-red-500/10 hover:text-red-500"
+                          className="grid h-8 w-8 cursor-pointer place-items-center rounded-lg text-faint transition-colors hover:bg-danger/10 hover:text-danger"
                         >
                           <FiTrash2 className="h-3.5 w-3.5" />
                         </button>
@@ -428,19 +432,19 @@ export function ItemForm({
               <FiPlus className="h-3.5 w-3.5" />
               Add field
             </Button>
-          </SectionCard>
+          </Section>
 
-          <SectionCard title="Notes">
+          <Section title="Notes">
             <Textarea
               rows={4}
               placeholder="Anything else worth remembering…"
               className="mt-1"
               {...register("notes")}
             />
-          </SectionCard>
+          </Section>
         </div>
 
-        <aside className="space-y-6 lg:sticky lg:top-20">
+        <aside className="space-y-9 lg:sticky lg:top-8">
           <LivePreview
             name={values.name}
             description={values.description}
@@ -451,12 +455,12 @@ export function ItemForm({
             hasNotes={Boolean(values.notes?.trim())}
           />
 
-          <SectionCard title="Appearance">
+          <Section title="Appearance">
             <AppearanceEditor
               value={appearance}
               onChange={(next) => setValue("appearance", next)}
             />
-          </SectionCard>
+          </Section>
         </aside>
       </div>
     </form>
@@ -491,18 +495,17 @@ function LivePreview({
   fields: { name: string; type: FieldType; value: string }[];
   hasNotes: boolean;
 }) {
-  const accentSoft = `color-mix(in srgb, ${appearance.accent} 10%, transparent)`;
   return (
-    <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-sm">
+    <div className="overflow-hidden rounded-xl bg-surface ring-1 ring-line">
       {appearance.banner !== "none" ? (
         <span
           aria-hidden
-          className="block h-10 w-full"
+          className="block h-[3px] w-full"
           style={{
             background:
               appearance.banner === "gradient"
-                ? `radial-gradient(120% 160% at 15% 0%, color-mix(in srgb, ${appearance.accent} 45%, transparent), transparent 60%), linear-gradient(160deg, color-mix(in srgb, ${appearance.accent} 18%, transparent), transparent 55%)`
-                : `linear-gradient(150deg, color-mix(in srgb, ${appearance.accent} 20%, transparent), transparent 70%)`,
+                ? `linear-gradient(90deg, color-mix(in srgb, ${appearance.accent} 85%, transparent), color-mix(in srgb, ${appearance.accent} 40%, transparent))`
+                : `color-mix(in srgb, ${appearance.accent} 75%, transparent)`,
           }}
         />
       ) : null}
@@ -521,37 +524,29 @@ function LivePreview({
               {description || category}
             </p>
           </div>
-          <span className="rounded-full border border-line bg-surface-2 px-2 py-0.5 text-[10px] font-medium capitalize text-muted">
-            {category}
-          </span>
         </div>
 
         {fields.length > 0 ? (
-          <div className="mt-3.5 grid gap-1.5">
+          <div className="mt-3.5 divide-y divide-line/60 border-t border-line/60">
             {fields.map((f, i) => (
-              <div key={i} className="rounded-lg border border-line bg-surface-3/60 p-2">
-                <p className="text-[10px] font-semibold uppercase tracking-wide text-faint">
+              <div key={i} className="flex items-center justify-between gap-2 py-2">
+                <span className="truncate text-[11px] font-medium uppercase tracking-wide text-faint">
                   {f.name}
-                </p>
-                <p
+                </span>
+                <span
                   className={cn(
-                    "mt-0.5 truncate text-[12px] text-ink",
+                    "truncate text-[12px] text-ink",
                     isSensitiveType(f.type) && "font-mono tracking-widest",
                   )}
                 >
-                  {isSensitiveType(f.type)
-                    ? "••••••••"
-                    : f.value || "—"}
-                </p>
+                  {isSensitiveType(f.type) ? "••••••••" : f.value || "—"}
+                </span>
               </div>
             ))}
           </div>
         ) : (
-          <div
-            className="mt-3.5 rounded-lg border border-dashed px-3 py-3"
-            style={{ borderColor: appearance.accent, background: accentSoft }}
-          >
-            <p className="text-center text-[11px] font-medium" style={{ color: appearance.accent }}>
+          <div className="mt-3.5 border border-dashed border-line-strong rounded-lg px-3 py-3">
+            <p className="text-center text-[11px] font-medium text-faint">
               No fields yet — add one in the editor
             </p>
           </div>

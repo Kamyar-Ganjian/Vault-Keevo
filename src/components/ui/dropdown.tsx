@@ -25,7 +25,7 @@ export const DropdownMenuContent = forwardRef<
           initial={{ opacity: 0, scale: 0.96, y: -4 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ type: "spring", duration: 0.28, bounce: 0.18 }}
-          className="min-w-[180px] rounded-xl border border-line bg-surface p-1.5 shadow-xl"
+          className="min-w-[180px] rounded-xl bg-surface-3 p-1.5 shadow-elev ring-1 ring-line-strong"
         >
           {children}
         </motion.div>
