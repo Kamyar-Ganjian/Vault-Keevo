@@ -10,24 +10,32 @@ if (process.env.NODE_ENV === "production") {
     const set = value != null && value !== "";
     return { set, length: set ? String(value).length : 0 };
   };
+  const trustHostResolved = Boolean(
+    process.env.AUTH_URL ??
+      process.env.AUTH_TRUST_HOST ??
+      process.env.VERCEL ??
+      process.env.CF_PAGES ??
+      process.env.NODE_ENV !== "production",
+  );
   console.log(
     "[auth-diag] init",
     JSON.stringify({
       node: process.version,
       AUTH_SECRET: presence("AUTH_SECRET"),
       NEXTAUTH_SECRET: presence("NEXTAUTH_SECRET"),
-      AUTH_TRUST_HOST: { set: process.env.AUTH_TRUST_HOST != null },
+      AUTH_TRUST_HOST: presence("AUTH_TRUST_HOST"),
       AUTH_URL: { set: process.env.AUTH_URL != null },
       NEXTAUTH_URL: { set: process.env.NEXTAUTH_URL != null },
-      AUTH_REDIRECT_PROXY_URL: { set: process.env.AUTH_REDIRECT_PROXY_URL != null },
-      VERCEL: { set: process.env.VERCEL != null },
+      VERCEL: presence("VERCEL"),
       DATABASE_URL: { set: process.env.DATABASE_URL != null },
+      trustHostResolved,
     }),
   );
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: "jwt" },
+  trustHost: true,
   pages: { signIn: "/login" },
   providers: [
     Credentials({
