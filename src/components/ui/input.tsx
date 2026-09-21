@@ -56,6 +56,25 @@ export function Label({
   );
 }
 
-export function FieldHint({ children }: { children: React.ReactNode }) {
-  return <p className="mt-1.5 text-xs text-faint">{children}</p>;
+export function FormField({
+  label,
+  htmlFor,
+  error,
+  className,
+  children,
+}: {
+  label: React.ReactNode;
+  htmlFor?: string;
+  error?: string;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className={className}>
+      <Label htmlFor={htmlFor} error={error}>
+        {label}
+      </Label>
+      <div className="mt-1.5">{children}</div>
+    </div>
+  );
 }

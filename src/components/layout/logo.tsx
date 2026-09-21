@@ -1,10 +1,8 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-export type LogoVariant = "auto" | "white" | "black" | "accent";
+export type LogoVariant = "auto" | "accent";
 
 const LOGO = {
   white: "/logos/keevo-white.png",
@@ -41,12 +39,6 @@ export function Mark({
   variant?: LogoVariant;
   className?: string;
 }) {
-  if (variant === "white") {
-    return <BrandImage src={LOGO.white} className={className} />;
-  }
-  if (variant === "black") {
-    return <BrandImage src={LOGO.black} className={className} />;
-  }
   if (variant === "accent") {
     return <BrandImage src={LOGO.accent} className={className} />;
   }
@@ -58,16 +50,7 @@ export function Mark({
   );
 }
 
-export function Logo({
-  className,
-  href = "/vault",
-  size = "md",
-}: {
-  className?: string;
-  href?: string;
-  size?: "sm" | "md";
-}) {
-  const sizeClass = size === "md" ? "h-7 w-44" : "h-6 w-[150px]";
+export function Logo({ className, href = "/vault" }: { className?: string; href?: string }) {
   return (
     <Link href={href} className={cn("group inline-block", className)}>
       <span className="sr-only">Keevo</span>
@@ -75,14 +58,14 @@ export function Logo({
         src={LOGO.white}
         className={cn(
           "transition-transform duration-200 group-hover:scale-[1.03] group-active:scale-95 hidden dark:block",
-          sizeClass,
+          "h-7 w-44",
         )}
       />
       <BrandImage
         src={LOGO.black}
         className={cn(
           "transition-transform duration-200 group-hover:scale-[1.03] group-active:scale-95 dark:hidden",
-          sizeClass,
+          "h-7 w-44",
         )}
       />
     </Link>

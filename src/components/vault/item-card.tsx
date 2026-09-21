@@ -1,48 +1,23 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import Link from "next/link";
 import { FiChevronRight, FiFile, FiStar } from "react-icons/fi";
-import { toast } from "sonner";
 import { ItemIcon } from "@/components/items/item-icon";
-import { toggleFavoriteAction } from "@/lib/actions/items";
+import { ItemBanner } from "@/components/items/item-banner";
+import { CategoryBadge } from "@/components/ui/category-badge";
+import { useFavorite } from "@/hooks/use-favorite";
+import { categoryLabel } from "@/lib/types";
 import type { ItemCardData } from "@/lib/types";
-import { CATEGORY_COLORS } from "@/lib/types";
 import { cn, relativeTime } from "@/lib/utils";
 
-const CATEGORY_LABELS: Record<ItemCardData["category"], string> = {
-  account: "Account",
-  server: "Server",
-  domain: "Domain",
-  other: "Other",
-};
-
 export function ItemCard({ item }: { item: ItemCardData }) {
-  const router = useRouter();
-  const [favorite, setFavorite] = useState(item.favorite);
-  const [busy, setBusy] = useState(false);
+  const { favorite, busy, toggle } = useFavorite(item.id, item.favorite);
 
-  async function toggleFavorite(event: React.MouseEvent) {
+  function toggleFavorite(event: React.MouseEvent) {
     event.preventDefault();
     event.stopPropagation();
-    if (busy) return;
-    setBusy(true);
-    const previous = favorite;
-    setFavorite(!previous);
-    const result = await toggleFavoriteAction(item.id);
-    if (result.error) {
-      setFavorite(previous);
-      toast.error(result.error);
-    } else if (typeof result.favorite === "boolean") {
-      setFavorite(result.favorite);
-    }
-    setBusy(false);
-    router.refresh();
+    void toggle();
   }
-
-  const hasBanner = item.appearance.banner !== "none";
-  const categoryColor = CATEGORY_COLORS[item.category];
 
   return (
     <div className="group relative">
@@ -63,18 +38,7 @@ export function ItemCard({ item }: { item: ItemCardData }) {
           }}
         />
 
-        {hasBanner ? (
-          <span
-            aria-hidden
-            className="relative block h-[3px] w-full"
-            style={{
-              background:
-                item.appearance.banner === "gradient"
-                  ? `linear-gradient(90deg, color-mix(in srgb, ${item.appearance.accent} 85%, transparent), color-mix(in srgb, ${item.appearance.accent} 40%, transparent))`
-                  : `color-mix(in srgb, ${item.appearance.accent} 75%, transparent)`,
-            }}
-          />
-        ) : null}
+        <ItemBanner appearance={item.appearance} className="relative" />
 
         <div className="relative p-4">
           <div className="flex items-start gap-3">
@@ -89,7 +53,7 @@ export function ItemCard({ item }: { item: ItemCardData }) {
                 {item.name}
               </h3>
               <p className="mt-0.5 truncate text-xs text-faint">
-                {item.description || CATEGORY_LABELS[item.category]}
+                {item.description || categoryLabel(item.category)}
               </p>
             </div>
             <button
@@ -110,19 +74,7 @@ export function ItemCard({ item }: { item: ItemCardData }) {
           </div>
 
           <div className="mt-3.5 flex items-center gap-2 border-t border-line/60 pt-3">
-            <span
-              className="inline-flex items-center gap-1.5 rounded-md px-1.5 py-0.5 text-[11px] font-medium"
-              style={{
-                color: `color-mix(in srgb, ${categoryColor} 72%, var(--ink))`,
-                background: `color-mix(in srgb, ${categoryColor} 8%, transparent)`,
-              }}
-            >
-              <span
-                className="h-1.5 w-1.5 rounded-full"
-                style={{ background: categoryColor }}
-              />
-              {CATEGORY_LABELS[item.category]}
-            </span>
+            <CategoryBadge category={item.category} />
             <span className="flex items-center gap-1 text-[11px] text-faint">
               <FiFile className="h-3 w-3" />
               {item.fieldCount}

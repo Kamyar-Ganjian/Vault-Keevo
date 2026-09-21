@@ -1,13 +1,26 @@
 import type { FieldType } from "./field-types";
 
+export const CATEGORY_VALUES = ["account", "server", "domain", "other"] as const;
+
+export type Category = (typeof CATEGORY_VALUES)[number];
+
 export const CATEGORIES = [
   { value: "account", label: "Accounts" },
   { value: "server", label: "Servers" },
   { value: "domain", label: "Domains" },
   { value: "other", label: "Other" },
-] as const;
+] as const satisfies readonly { value: Category; label: string }[];
 
-export type Category = (typeof CATEGORIES)[number]["value"];
+const CATEGORY_LABELS: Record<Category, string> = {
+  account: "Account",
+  server: "Server",
+  domain: "Domain",
+  other: "Other",
+};
+
+export function categoryLabel(category: string) {
+  return CATEGORY_LABELS[category as Category] ?? CATEGORY_LABELS.other;
+}
 
 /** Quiet color signals per category. Used only at low opacity. */
 export const CATEGORY_COLORS: Record<Category, string> = {
@@ -17,8 +30,11 @@ export const CATEGORY_COLORS: Record<Category, string> = {
   other: "#94a3b8",
 };
 
-export type IconShape = "circle" | "rounded" | "square";
-export type BannerStyle = "none" | "accent" | "gradient";
+export const ICON_SHAPES = ["circle", "rounded", "square"] as const;
+export const BANNER_STYLES = ["none", "accent", "gradient"] as const;
+
+export type IconShape = (typeof ICON_SHAPES)[number];
+export type BannerStyle = (typeof BANNER_STYLES)[number];
 
 export interface ItemAppearance {
   accent: string;
@@ -38,18 +54,6 @@ export interface FieldValue {
   name: string;
   type: FieldType;
   value: string;
-}
-
-/** Shape submitted by the item editor and accepted by server actions. */
-export interface ItemInput {
-  name: string;
-  description: string;
-  icon: string;
-  category: Category;
-  favorite: boolean;
-  appearance: ItemAppearance;
-  notes: string;
-  fields: FieldValue[];
 }
 
 /** Lightweight representation used for cards + search results. */

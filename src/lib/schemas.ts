@@ -1,6 +1,10 @@
 import { z } from "zod";
 import { FIELD_TYPES } from "./field-types";
-import { DEFAULT_APPEARANCE } from "./types";
+import {
+  BANNER_STYLES,
+  CATEGORY_VALUES,
+  ICON_SHAPES,
+} from "./types";
 
 export const loginSchema = z.object({
   email: z.email("Enter a valid email address"),
@@ -42,8 +46,8 @@ const appearanceSchema = z.object({
     .min(1)
     .max(40)
     .regex(/^#/, "Pick an accent color"),
-  iconShape: z.enum(["circle", "rounded", "square"]),
-  banner: z.enum(["none", "accent", "gradient"]),
+  iconShape: z.enum(ICON_SHAPES),
+  banner: z.enum(BANNER_STYLES),
 });
 
 export const itemSchema = z.object({
@@ -53,7 +57,7 @@ export const itemSchema = z.object({
     .max(120, "Name is too long"),
   description: z.string().trim().max(300, "Description is too long"),
   icon: z.string().max(48),
-  category: z.enum(["account", "server", "domain", "other"]),
+  category: z.enum(CATEGORY_VALUES),
   favorite: z.boolean(),
   appearance: appearanceSchema,
   notes: z.string().max(50000, "Notes are too long"),
@@ -66,17 +70,4 @@ export type ItemInput = z.infer<typeof itemSchema>;
 
 export function emptyField() {
   return { name: "", type: "text" as const, value: "" };
-}
-
-export function editorDefaults() {
-  return {
-    name: "",
-    description: "",
-    icon: "box",
-    category: "other" as const,
-    favorite: false,
-    appearance: DEFAULT_APPEARANCE,
-    notes: "",
-    fields: [] as { name: string; type: "text"; value: string }[],
-  };
 }

@@ -9,8 +9,9 @@ import { toast } from "sonner";
 import { LoginInput, SignupInput, loginSchema, signupSchema } from "@/lib/schemas";
 import { loginAction, signupAction } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
-import { Input, Label } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/kbd";
+import { Input, FormField } from "@/components/ui/input";
+import { Alert } from "@/components/ui/alert";
+import { Spinner } from "@/components/ui/spinner";
 import { Logo, Mark } from "@/components/layout/logo";
 
 interface AuthValues {
@@ -110,52 +111,38 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
               </p>
             </div>
 
-            {serverError ? (
-              <div
-                role="alert"
-                className="mb-4 rounded-xl border border-danger/25 bg-danger/5 px-3.5 py-2.5 text-[13px] font-medium text-danger"
-              >
-                {serverError}
-              </div>
-            ) : null}
+            {serverError ? <Alert className="mb-4">{serverError}</Alert> : null}
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
               {!isLogin ? (
-                <div>
-                  <Label htmlFor="name" error={errors.name?.message}>
-                    Name
-                  </Label>
+                <FormField label="Name" htmlFor="name" error={errors.name?.message}>
                   <Input
                     id="name"
                     autoComplete="name"
                     autoFocus
-                    className="mt-1.5"
                     placeholder="Your name"
                     {...register("name")}
                   />
-                </div>
+                </FormField>
               ) : null}
 
-              <div>
-                <Label htmlFor="email" error={errors.email?.message}>
-                  Email
-                </Label>
+              <FormField label="Email" htmlFor="email" error={errors.email?.message}>
                 <Input
                   id="email"
                   type="email"
                   autoComplete="email"
-                  className="mt-1.5"
                   placeholder="you@example.com"
                   autoFocus={isLogin}
                   {...register("email")}
                 />
-              </div>
+              </FormField>
 
-              <div>
-                <Label htmlFor="password" error={errors.password?.message}>
-                  Password
-                </Label>
-                <div className="relative mt-1.5">
+              <FormField
+                label="Password"
+                htmlFor="password"
+                error={errors.password?.message}
+              >
+                <div className="relative">
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
@@ -179,25 +166,22 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
                     )}
                   </button>
                 </div>
-              </div>
+              </FormField>
 
               {!isLogin ? (
-                <div>
-                  <Label
-                    htmlFor="confirmPassword"
-                    error={errors.confirmPassword?.message}
-                  >
-                    Confirm password
-                  </Label>
+                <FormField
+                  label="Confirm password"
+                  htmlFor="confirmPassword"
+                  error={errors.confirmPassword?.message}
+                >
                   <Input
                     id="confirmPassword"
                     type={showPassword ? "text" : "password"}
                     autoComplete="new-password"
-                    className="mt-1.5"
                     placeholder="Repeat your password"
                     {...register("confirmPassword")}
                   />
-                </div>
+                </FormField>
               ) : null}
 
               <Button type="submit" className="w-full" disabled={submitting}>

@@ -1,8 +1,9 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { getVaultItems } from "@/lib/queries";
 import { requireUserId } from "@/lib/actions/auth";
 import { auth } from "@/lib/auth";
 import { VaultDashboard } from "@/components/vault/vault-dashboard";
+import { pluralize } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Vault — Keevo",
@@ -36,7 +37,7 @@ export default async function VaultPage() {
           </p>
         </div>
         <p className="inline-flex items-center gap-2 rounded-full bg-surface px-3.5 py-2 text-[13px] font-medium text-muted ring-1 ring-line">
-          {items.length} {items.length === 1 ? "item" : "items"}
+          {pluralize(items.length, "item")}
         </p>
       </div>
       <VaultDashboard items={items} />

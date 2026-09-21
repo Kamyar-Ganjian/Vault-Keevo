@@ -1,19 +1,22 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { FiArrowUp, FiArrowDown, FiEye, FiEyeOff, FiPlus, FiTrash2 } from "react-icons/fi";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { Input, Textarea, Label } from "@/components/ui/input";
+import { Input, Textarea, FormField } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { Alert } from "@/components/ui/alert";
+import { BackLink } from "@/components/ui/back-link";
+import { Section } from "@/components/ui/section";
 import { ItemIcon } from "@/components/items/item-icon";
+import { ItemBanner } from "@/components/items/item-banner";
 import { IconPicker } from "@/components/items/icon-picker";
 import { AppearanceEditor } from "@/components/items/appearance-editor";
 import {
@@ -28,28 +31,6 @@ import { cn } from "@/lib/utils";
 function FieldIcon({ type, className }: { type: FieldType; className?: string }) {
   const Icon = FIELD_TYPE_META[type].icon;
   return <Icon className={className} />;
-}
-
-function Section({
-  title,
-  hint,
-  children,
-}: {
-  title: string;
-  hint?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section>
-      <h2 className="flex items-center gap-2.5 text-[13px] font-semibold tracking-wide text-muted">
-        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
-        {title}
-        <span className="h-px flex-1 bg-line" />
-      </h2>
-      {hint ? <p className="mt-1 text-xs text-faint">{hint}</p> : null}
-      <div className="mt-4">{children}</div>
-    </section>
-  );
 }
 
 export function ItemForm({
@@ -110,10 +91,7 @@ export function ItemForm({
   const values = watch();
   const appearance = values.appearance;
 
-  const previewFields = useMemo(
-    () => values.fields.filter((f) => f.name.trim()).slice(0, 4),
-    [values.fields],
-  );
+  const previewFields = values.fields.filter((f) => f.name.trim()).slice(0, 4);
 
   async function onSubmit(input: ItemInput) {
     if (saving) return;
@@ -162,12 +140,9 @@ export function ItemForm({
       }}
     >
       <div className="flex items-center justify-between gap-3">
-        <Link
-          href={mode === "edit" && item ? `/vault/items/${item.id}` : "/vault"}
-          className="flex cursor-pointer items-center gap-1.5 text-[13px] font-medium text-faint transition-colors hover:text-ink"
-        >
+        <BackLink href={mode === "edit" && item ? `/vault/items/${item.id}` : "/vault"}>
           ← {mode === "edit" ? "Back to item" : "Vault"}
-        </Link>
+        </BackLink>
         <div className="flex items-center gap-2">
           <Button
             type="button"
@@ -191,54 +166,39 @@ export function ItemForm({
         </div>
       </div>
 
-      {fieldErrorName ? (
-        <p className="mt-4 rounded-lg border border-danger/25 bg-danger/5 px-3 py-2 text-xs font-medium text-danger">
-          {fieldErrorName}
-        </p>
-      ) : null}
+      {fieldErrorName ? <Alert className="mt-4">{fieldErrorName}</Alert> : null}
 
       <div className="mt-7 grid items-start gap-8 lg:grid-cols-[1fr_360px]">
         <div className="space-y-9">
           <Section title="Basics">
             <div className="space-y-4">
-              <div>
-                <Label htmlFor="name" error={errors.name?.message}>
-                  Name
-                </Label>
+              <FormField label="Name" htmlFor="name" error={errors.name?.message}>
                 <Input
                   id="name"
                   autoFocus
-                  className="mt-1.5"
                   placeholder="e.g. Netflix account"
                   {...register("name")}
                 />
-              </div>
+              </FormField>
 
-              <div>
-                <Label htmlFor="description">Description</Label>
+              <FormField label="Description" htmlFor="description">
                 <Input
                   id="description"
-                  className="mt-1.5"
                   placeholder="A short note about this item"
                   {...register("description")}
                 />
-              </div>
+              </FormField>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <Label htmlFor="category">Category</Label>
-                  <Select
-                    id="category"
-                    className="mt-1.5"
-                    {...register("category")}
-                  >
+                <FormField label="Category" htmlFor="category">
+                  <Select id="category" {...register("category")}>
                     {CATEGORIES.map((category) => (
                       <option key={category.value} value={category.value}>
                         {category.label}
                       </option>
                     ))}
                   </Select>
-                </div>
+                </FormField>
                 <div className="flex items-end pb-1">
                   <div className="flex items-center gap-2.5">
                     <Controller
@@ -461,7 +421,7 @@ export function ItemForm({
             appearance={appearance}
             category={values.category}
             fields={previewFields}
-            hasNotes={Boolean(values.notes?.trim())}
+            notes={values.notes ?? ""}
           />
 
           <Section title="Appearance">
@@ -494,7 +454,7 @@ function LivePreview({
   appearance,
   category,
   fields,
-  hasNotes,
+  notes,
 }: {
   name: string;
   description: string;
@@ -502,22 +462,12 @@ function LivePreview({
   appearance: ItemInput["appearance"];
   category: ItemInput["category"];
   fields: { name: string; type: FieldType; value: string }[];
-  hasNotes: boolean;
+  notes: string;
 }) {
+  const hasNotes = Boolean(notes?.trim());
   return (
     <div className="overflow-hidden rounded-xl bg-surface ring-1 ring-line">
-      {appearance.banner !== "none" ? (
-        <span
-          aria-hidden
-          className="block h-[3px] w-full"
-          style={{
-            background:
-              appearance.banner === "gradient"
-                ? `linear-gradient(90deg, color-mix(in srgb, ${appearance.accent} 85%, transparent), color-mix(in srgb, ${appearance.accent} 40%, transparent))`
-                : `color-mix(in srgb, ${appearance.accent} 75%, transparent)`,
-          }}
-        />
-      ) : null}
+      <ItemBanner appearance={appearance} />
       <div className={cn("p-4", appearance.banner === "none" && "pt-5")}>
         <div className="flex items-center gap-3">
           <ItemIcon
@@ -567,7 +517,7 @@ function LivePreview({
               Notes
             </p>
             <p className="mt-1 line-clamp-2 text-[11.5px] leading-relaxed text-muted">
-              Notes preview
+              {notes}
             </p>
           </div>
         ) : null}

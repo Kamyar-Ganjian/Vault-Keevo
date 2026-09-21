@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { FiArrowRight, FiSearch, FiStar } from "react-icons/fi";
 import { searchItemsAction } from "@/lib/actions/items";
 import type { ItemCardData } from "@/lib/types";
-import { cn } from "@/lib/utils";
+import { cn, pluralize } from "@/lib/utils";
 import { Kbd } from "@/components/ui/kbd";
 import { VaultPulse } from "@/components/vault-core";
 import { ItemIcon } from "@/components/items/item-icon";
@@ -81,7 +81,7 @@ function SearchPalette({ onClose }: { onClose: () => void }) {
   function onKeyDown(event: React.KeyboardEvent) {
     if (event.key === "ArrowDown") {
       event.preventDefault();
-      setActive((a) => Math.min(a + 1, results.length - 1));
+      setActive((a) => Math.min(a + 1, Math.max(results.length - 1, 0)));
     } else if (event.key === "ArrowUp") {
       event.preventDefault();
       setActive((a) => Math.max(a - 1, 0));
@@ -193,10 +193,7 @@ function SearchPalette({ onClose }: { onClose: () => void }) {
                         {item.fieldCount ? (
                           <>
                             <span aria-hidden>·</span>
-                            <span>
-                              {item.fieldCount}{" "}
-                              {item.fieldCount === 1 ? "field" : "fields"}
-                            </span>
+                            <span>{pluralize(item.fieldCount, "field")}</span>
                           </>
                         ) : null}
                       </span>

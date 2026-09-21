@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { FiArchive, FiArrowRight, FiPlus, FiStar } from "react-icons/fi";
 import { ItemCard } from "@/components/vault/item-card";
 import { VaultCore } from "@/components/vault-core";
+import { SectionHeading } from "@/components/ui/section";
 import type { ItemCardData, Category } from "@/lib/types";
 import { CATEGORIES } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -17,23 +18,12 @@ const GRID = "grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3";
 export function VaultDashboard({ items }: { items: ItemCardData[] }) {
   const [tab, setTab] = useState<Tab>("all");
 
-  const favorites = useMemo(() => items.filter((i) => i.favorite), [items]);
-
-  const counts = useMemo(() => {
-    const map = new Map<Tab, number>([["all", items.length]]);
-    for (const cat of CATEGORIES) {
-      map.set(
-        cat.value,
-        items.filter((i) => i.category === cat.value).length,
-      );
-    }
-    return map;
-  }, [items]);
-
-  const visible = useMemo(
-    () => (tab === "all" ? items : items.filter((i) => i.category === tab)),
-    [items, tab],
-  );
+  const favorites = items.filter((i) => i.favorite);
+  const visible = tab === "all" ? items : items.filter((i) => i.category === tab);
+  const counts = new Map<Tab, number>([
+    ["all", items.length],
+    ...CATEGORIES.map((c) => [c.value, items.filter((i) => i.category === c.value).length] as [Category, number]),
+  ]);
 
   const everythingEmpty = items.length === 0;
 
@@ -125,19 +115,20 @@ export function VaultDashboard({ items }: { items: ItemCardData[] }) {
         ) : null}
 
         <section className={cn(favorites.length > 0 && tab === "all" && "mt-8")}>
-          <h3 className="flex items-center gap-2.5 text-[13px] font-semibold tracking-wide text-muted">
-            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-            {favorites.length > 0 && tab === "all" ? "All items" : "Items"}
-            <span className="h-px flex-1 bg-line" />
-            {tab !== "all" ? (
-              <button
-                onClick={() => setTab("all")}
-                className="flex cursor-pointer items-center gap-1 text-[12px] font-medium text-accent transition-opacity hover:opacity-80"
-              >
-                View all <FiArrowRight className="h-3 w-3" />
-              </button>
-            ) : null}
-          </h3>
+          <SectionHeading
+            as="h3"
+            title={favorites.length > 0 && tab === "all" ? "All items" : "Items"}
+            action={
+              tab !== "all" ? (
+                <button
+                  onClick={() => setTab("all")}
+                  className="flex cursor-pointer items-center gap-1 text-[12px] font-medium text-accent transition-opacity hover:opacity-80"
+                >
+                  View all <FiArrowRight className="h-3 w-3" />
+                </button>
+              ) : null
+            }
+          />
 
           {visible.length === 0 ? (
             <div className="mt-4 flex flex-col items-center rounded-xl border border-dashed border-line-strong bg-surface-3/40 py-14 text-center">

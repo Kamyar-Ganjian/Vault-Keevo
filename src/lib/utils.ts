@@ -14,8 +14,8 @@ export function initials(name: string) {
     .join("");
 }
 
-export function truncate(input: string, max: number) {
-  return input.length > max ? `${input.slice(0, max).trimEnd()}…` : input;
+export function pluralize(count: number, singular: string, plural?: string) {
+  return `${count} ${count === 1 ? singular : (plural ?? `${singular}s`)}`;
 }
 
 export function formatDate(input: string | Date) {

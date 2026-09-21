@@ -17,17 +17,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown";
-import {
-  Dialog,
-} from "@/components/ui/dialog";
+import { Dialog } from "@/components/ui/dialog";
+import { BackLink } from "@/components/ui/back-link";
+import { SectionHeading } from "@/components/ui/section";
+import { CategoryBadge } from "@/components/ui/category-badge";
 import {
   deleteItemAction,
   duplicateItemAction,
-  toggleFavoriteAction,
 } from "@/lib/actions/items";
+import { useFavorite } from "@/hooks/use-favorite";
+import { isSensitiveType } from "@/lib/field-types";
 import type { ItemDetailData } from "@/lib/types";
-import { CATEGORY_COLORS } from "@/lib/types";
-import { cn, formatDate } from "@/lib/utils";
+import { cn, formatDate, pluralize } from "@/lib/utils";
 
 const ENTER = {
   initial: { opacity: 0, y: 8, scale: 0.985 },
@@ -36,23 +37,12 @@ const ENTER = {
 
 export function ItemDetail({ item }: { item: ItemDetailData }) {
   const router = useRouter();
-  const [favorite, setFavorite] = useState(item.favorite);
+  const { favorite, toggle } = useFavorite(item.id, item.favorite);
   const [forceReveal, setForceReveal] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [busy, setBusy] = useState(false);
 
-  const hasSensitive = item.fields.some(
-    (f) => f.type === "secret" || f.type === "code",
-  );
-
-  function toggleFavorite() {
-    setFavorite((f) => !f);
-    toggleFavoriteAction(item.id).then((result) => {
-      if (result.error) toast.error(result.error);
-      else setFavorite(Boolean(result.favorite));
-      router.refresh();
-    });
-  }
+  const hasSensitive = item.fields.some((f) => isSensitiveType(f.type));
 
   async function duplicate() {
     if (busy) return;
@@ -85,12 +75,7 @@ export function ItemDetail({ item }: { item: ItemDetailData }) {
   return (
     <main className="mx-auto max-w-2xl px-4 pb-20 pt-6 sm:px-6 lg:pt-10">
       <div className="flex items-center justify-between gap-3">
-        <Link
-          href="/vault"
-          className="flex cursor-pointer items-center gap-1.5 text-[13px] font-medium text-faint transition-colors hover:text-ink"
-        >
-          ← Vault
-        </Link>
+        <BackLink href="/vault">← Vault</BackLink>
         <div className="flex items-center gap-1">
           <Button asChild variant="ghost" size="sm" className="text-muted">
             <Link href={`/vault/items/${item.id}/edit`}>
@@ -173,7 +158,7 @@ export function ItemDetail({ item }: { item: ItemDetailData }) {
               </p>
             </div>
             <button
-              onClick={toggleFavorite}
+              onClick={toggle}
               aria-label={favorite ? "Remove from favorites" : "Add to favorites"}
               aria-pressed={favorite}
               className={cn(
@@ -189,19 +174,7 @@ export function ItemDetail({ item }: { item: ItemDetailData }) {
           </div>
 
           <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-line pt-4 text-xs text-muted">
-            <span
-              className="inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 capitalize font-medium"
-              style={{
-                color: `color-mix(in srgb, ${CATEGORY_COLORS[item.category]} 72%, var(--ink))`,
-                background: `color-mix(in srgb, ${CATEGORY_COLORS[item.category]} 8%, transparent)`,
-              }}
-            >
-              <span
-                className="h-1.5 w-1.5 rounded-full"
-                style={{ background: CATEGORY_COLORS[item.category] }}
-              />
-              {item.category}
-            </span>
+            <CategoryBadge category={item.category} className="px-2" />
             <span className="inline-flex items-center gap-1.5 text-faint">
               <FiCalendar className="h-3 w-3" />
               Updated {formatDate(item.updatedAt)}
@@ -213,7 +186,7 @@ export function ItemDetail({ item }: { item: ItemDetailData }) {
                 </span>
                 {item.fieldCount > 0 && (
                   <span className="inline-flex items-center gap-1.5 text-faint">
-                    {item.fieldCount} {item.fieldCount === 1 ? "field" : "fields"}
+                    {pluralize(item.fieldCount, "field")}
                   </span>
                 )}
                 {hasSensitive && (
@@ -232,11 +205,7 @@ export function ItemDetail({ item }: { item: ItemDetailData }) {
 
       {item.fields.length > 0 ? (
         <section className="mt-8">
-          <h2 className="flex items-center gap-2.5 text-[13px] font-semibold tracking-wide text-muted">
-            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-            Fields
-            <span className="h-px flex-1 bg-line" />
-          </h2>
+          <SectionHeading title="Fields" />
           <div className="mt-3 divide-y divide-line overflow-hidden rounded-xl bg-surface ring-1 ring-line">
             {item.fields.map((field, i) => (
               <motion.div
@@ -269,11 +238,7 @@ export function ItemDetail({ item }: { item: ItemDetailData }) {
 
       {item.notes ? (
         <section className="mt-8">
-          <h2 className="flex items-center gap-2.5 text-[13px] font-semibold tracking-wide text-muted">
-            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-            Notes
-            <span className="h-px flex-1 bg-line" />
-          </h2>
+          <SectionHeading title="Notes" />
           <div className="mt-3 rounded-xl bg-surface px-5 py-4 ring-1 ring-line">
             <p className="whitespace-pre-wrap text-[13px] leading-relaxed text-ink">
               {item.notes}

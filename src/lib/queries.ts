@@ -3,13 +3,16 @@ import { prisma } from "@/lib/db";
 import { decryptSecret, isEncrypted } from "@/lib/secrets";
 import { getFieldTypeMeta, isSensitiveType } from "@/lib/field-types";
 import {
+  BANNER_STYLES,
+  CATEGORY_VALUES,
   DEFAULT_APPEARANCE,
+  ICON_SHAPES,
   type ItemAppearance,
   type ItemCardData,
   type ItemDetailData,
 } from "@/lib/types";
 
-export function parseAppearance(raw: string | null | undefined): ItemAppearance {
+function parseAppearance(raw: string | null | undefined): ItemAppearance {
   if (!raw) return DEFAULT_APPEARANCE;
   try {
     const parsed = JSON.parse(raw) as Partial<ItemAppearance>;
@@ -17,12 +20,14 @@ export function parseAppearance(raw: string | null | undefined): ItemAppearance 
       typeof parsed.accent === "string" && /^#/.test(parsed.accent)
         ? parsed.accent
         : DEFAULT_APPEARANCE.accent;
-    const iconShape = ["circle", "rounded", "square"].includes(
-      parsed.iconShape ?? "",
+    const iconShape = ICON_SHAPES.includes(
+      parsed.iconShape as ItemAppearance["iconShape"],
     )
       ? (parsed.iconShape as ItemAppearance["iconShape"])
       : DEFAULT_APPEARANCE.iconShape;
-    const banner = ["none", "accent", "gradient"].includes(parsed.banner ?? "")
+    const banner = BANNER_STYLES.includes(
+      parsed.banner as ItemAppearance["banner"],
+    )
       ? (parsed.banner as ItemAppearance["banner"])
       : DEFAULT_APPEARANCE.banner;
     return { accent, iconShape, banner };
@@ -100,7 +105,7 @@ export async function getItemDetail(
 }
 
 function validCategory(value: string) {
-  return ["account", "server", "domain", "other"].includes(value)
+  return (CATEGORY_VALUES as readonly string[]).includes(value)
     ? (value as ItemCardData["category"])
     : "other";
 }

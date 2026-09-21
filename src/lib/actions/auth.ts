@@ -70,7 +70,6 @@ export async function logoutAction(): Promise<{ error?: string }> {
     throw error;
   }
   redirect("/login");
-  return {};
 }
 
 export async function requireUserId(): Promise<string> {
