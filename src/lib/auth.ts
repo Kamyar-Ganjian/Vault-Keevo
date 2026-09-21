@@ -4,6 +4,28 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 
+if (process.env.NODE_ENV === "production") {
+  const presence = (key: string) => {
+    const value = process.env[key];
+    const set = value != null && value !== "";
+    return { set, length: set ? String(value).length : 0 };
+  };
+  console.log(
+    "[auth-diag] init",
+    JSON.stringify({
+      node: process.version,
+      AUTH_SECRET: presence("AUTH_SECRET"),
+      NEXTAUTH_SECRET: presence("NEXTAUTH_SECRET"),
+      AUTH_TRUST_HOST: { set: process.env.AUTH_TRUST_HOST != null },
+      AUTH_URL: { set: process.env.AUTH_URL != null },
+      NEXTAUTH_URL: { set: process.env.NEXTAUTH_URL != null },
+      AUTH_REDIRECT_PROXY_URL: { set: process.env.AUTH_REDIRECT_PROXY_URL != null },
+      VERCEL: { set: process.env.VERCEL != null },
+      DATABASE_URL: { set: process.env.DATABASE_URL != null },
+    }),
+  );
+}
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: "jwt" },
   pages: { signIn: "/login" },
