@@ -31,7 +31,6 @@ const fieldSchema = z.object({
   name: z
     .string()
     .trim()
-    .min(1, "Field name is required")
     .max(60, "Field name is too long"),
   type: z.enum(FIELD_TYPES),
   value: z.string().max(40000, "Field value is too long"),
@@ -51,7 +50,6 @@ export const itemSchema = z.object({
   name: z
     .string()
     .trim()
-    .min(1, "Give this item a name")
     .max(120, "Name is too long"),
   description: z.string().trim().max(300, "Description is too long"),
   icon: z.string().max(48),

@@ -9,6 +9,7 @@ export const Switch = forwardRef<
   return (
     <SwitchPrimitive.Root
       ref={ref}
+      type="button"
       className={cn(
         "relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border border-transparent transition-colors",
         "outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:ring-offset-2 focus-visible:ring-offset-app",

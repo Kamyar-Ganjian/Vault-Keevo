@@ -44,6 +44,7 @@ export function IconPicker({
           {ICON_GROUPS.map((g) => (
             <button
               key={g.group}
+              type="button"
               onClick={() => {
                 setGroup(g.group);
                 setQuery("");
@@ -65,6 +66,7 @@ export function IconPicker({
         {defs.map((def) => (
           <button
             key={def.key}
+            type="button"
             title={def.label}
             onClick={() => onChange(def.key)}
             aria-label={def.label}

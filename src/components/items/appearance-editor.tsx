@@ -68,6 +68,7 @@ export function AppearanceEditor({
           {ACCENT_COLORS.map((color) => (
             <button
               key={color.value}
+              type="button"
               title={color.name}
               onClick={() => pickAccent(color.value)}
               aria-label={`${color.name} accent`}
@@ -121,6 +122,7 @@ export function AppearanceEditor({
           {SHAPES.map((shape) => (
             <button
               key={shape.value}
+              type="button"
               onClick={() => onChange({ ...value, iconShape: shape.value })}
               className={cn(
                 "flex cursor-pointer flex-col items-center gap-1.5 rounded-xl border px-3 py-2.5 transition-colors",
@@ -153,6 +155,7 @@ export function AppearanceEditor({
           {BANNERS.map((banner) => (
             <button
               key={banner.value}
+              type="button"
               onClick={() => onChange({ ...value, banner: banner.value })}
               className={cn(
                 "cursor-pointer overflow-hidden rounded-xl border transition-colors",

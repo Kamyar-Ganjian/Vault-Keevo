@@ -97,7 +97,7 @@ export function ItemForm({
             favorite: false,
             appearance: { accent: "#6366f1", iconShape: "rounded", banner: "accent" },
             notes: "",
-            fields: [{ name: "", type: "text", value: "" }],
+            fields: [] as { name: string; type: "text"; value: string }[],
           },
   });
 
@@ -120,7 +120,9 @@ export function ItemForm({
     setSaving(true);
     const payload: ItemInput = {
       ...input,
-      fields: input.fields.map((f) => ({ ...f, value: f.value ?? "" })),
+      fields: input.fields
+        .filter((f) => f.name.trim() !== "" || f.value !== "")
+        .map((f) => ({ ...f, value: f.value ?? "" })),
     };
 
     const result =
@@ -145,7 +147,20 @@ export function ItemForm({
   const fieldErrorName = errors.fields?.message as string | undefined;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate
+      onKeyDown={(e) => {
+        if (
+          e.key === "Enter" &&
+          e.target instanceof HTMLElement &&
+          e.target.tagName !== "TEXTAREA" &&
+          e.target.tagName !== "BUTTON"
+        ) {
+          e.preventDefault();
+        }
+      }}
+    >
       <div className="flex items-center justify-between gap-3">
         <Link
           href={mode === "edit" && item ? `/vault/items/${item.id}` : "/vault"}
