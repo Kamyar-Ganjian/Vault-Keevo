@@ -260,7 +260,7 @@ export function ItemForm({
           >
             <div className="space-y-2.5">
               {fields.map((field, index) => {
-                const type = (field.type as FieldType) || "text";
+                const type = (values.fields[index]?.type as FieldType) || "text";
                 const meta = FIELD_TYPE_META[type];
                 const sensitive = isSensitiveType(type);
                 const shouldShow = sensitive
@@ -289,23 +289,17 @@ export function ItemForm({
                         )}
                         {...register(`fields.${index}.name`)}
                       />
-                      <select
+                      <Select
                         aria-label="Field type"
-                        value={field.type as string}
-                        onChange={(e) =>
-                          setValue(
-                            `fields.${index}.type`,
-                            e.target.value as FieldType,
-                          )
-                        }
-                        className="h-8 shrink-0 cursor-pointer appearance-none rounded-lg border border-line bg-surface-2 px-2.5 text-xs font-medium text-muted focus-visible:border-accent/60 focus-visible:outline-none"
+                        className="h-8 w-36 shrink-0 px-2.5 text-xs"
+                        {...register(`fields.${index}.type`)}
                       >
                         {Object.entries(FIELD_TYPE_META).map(([key, value]) => (
                           <option key={key} value={key}>
                             {value.label}
                           </option>
                         ))}
-                      </select>
+                      </Select>
                       <div className="flex shrink-0 items-center gap-0.5">
                         <button
                           type="button"
