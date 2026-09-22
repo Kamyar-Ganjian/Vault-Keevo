@@ -1,6 +1,6 @@
-import { redirect } from "next/navigation";
 import { AppShell } from "@/components/layout/app-shell";
 import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export default async function VaultLayout({
   children,
