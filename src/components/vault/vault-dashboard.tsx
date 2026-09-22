@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { FiArchive, FiArrowRight, FiPlus, FiStar } from "react-icons/fi";
@@ -17,6 +17,37 @@ const GRID = "grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3";
 
 export function VaultDashboard({ items }: { items: ItemCardData[] }) {
   const [tab, setTab] = useState<Tab>("all");
+  const stripRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const hasMounted = useRef(false);
+
+  useEffect(() => {
+    const el = stripRef.current;
+    if (!el) return;
+    const pill = el.querySelector<HTMLElement>(`[data-tab="${tab}"]`);
+    if (!pill) return;
+    const max = el.scrollWidth - el.clientWidth;
+    const target = Math.max(0, Math.min(pill.offsetLeft - (el.clientWidth - pill.offsetWidth) / 2, max));
+    el.scrollTo({ left: target, behavior: hasMounted.current ? "smooth" : "auto" });
+    hasMounted.current = true;
+  }, [tab]);
+
+  useEffect(() => {
+    const el = stripRef.current;
+    if (!el) return;
+    const update = () => {
+      setCanScrollLeft(el.scrollLeft > 4);
+      setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+    };
+    update();
+    el.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      el.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, []);
 
   const favorites = items.filter((i) => i.favorite);
   const visible = tab === "all" ? items : items.filter((i) => i.category === tab);
@@ -29,24 +60,24 @@ export function VaultDashboard({ items }: { items: ItemCardData[] }) {
 
   if (everythingEmpty) {
     return (
-      <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6">
-      <div className="flex flex-col items-center py-24 text-center">
-        <VaultCore size={92} />
-        <h2 className="mt-7 text-xl font-semibold tracking-tight text-ink">
-          Your vault is empty
-        </h2>
-        <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted">
-          Start adding the things you don&apos;t want to lose — an account, a
-          server, a domain. Give each one a name and a place.
-        </p>
-        <Link
-          href="/vault/new"
-          className="mt-7 inline-flex h-10 items-center gap-2 rounded-lg bg-accent px-5 text-sm font-medium text-accent-fg transition-colors hover:bg-accent-strong"
-        >
-          <FiPlus className="h-4 w-4" />
-          Add your first item
-        </Link>
-      </div>
+      <div className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
+        <div className="flex flex-col items-center py-8 text-center">
+          <VaultCore size={84} />
+          <h2 className="mt-7 text-xl font-semibold tracking-tight text-ink">
+            Your vault is empty
+          </h2>
+          <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted">
+            Start adding the things you don&apos;t want to lose — an account, a
+            server, a domain. Give each one a name and a place.
+          </p>
+          <Link
+            href="/vault/new"
+            className="mt-7 inline-flex h-10 items-center gap-2 rounded-lg bg-accent px-5 text-sm font-medium text-accent-fg transition-colors hover:bg-accent-strong"
+          >
+            <FiPlus className="h-4 w-4" />
+            Add your first item
+          </Link>
+        </div>
       </div>
     );
   }
@@ -54,39 +85,59 @@ export function VaultDashboard({ items }: { items: ItemCardData[] }) {
   return (
     <div>
       <div className="sticky top-14 z-30 border-b border-line/80 bg-app/90 backdrop-blur-xl lg:top-0">
-        <div className="scrollbar-none mx-auto flex w-full max-w-6xl items-center gap-1 overflow-x-auto px-3 py-2 sm:px-6">
-          {(["all", ...CATEGORIES.map((c) => c.value)] as Tab[]).map((value) => {
-            const active = tab === value;
-            return (
-              <button
-                key={value}
-                onClick={() => setTab(value)}
-                className={cn(
-                  "relative flex shrink-0 cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-[13px] font-medium transition-colors",
-                  active ? "text-ink" : "text-muted hover:text-ink",
-                )}
-              >
-                {active ? (
-                  <motion.span
-                    layoutId="vault-tab"
-                    className="absolute inset-0 rounded-lg bg-accent-soft ring-1 ring-accent/15"
-                    transition={{ type: "spring", bounce: 0.15, duration: 0.35 }}
-                  />
-                ) : null}
-                <span className="relative capitalize text-current">
-                  {value === "all" ? "All" : CATEGORIES.find((c) => c.value === value)?.label}
-                </span>
-                <span
+        <div className="relative mx-auto w-full max-w-6xl">
+          <div
+            ref={stripRef}
+            className="scrollbar-none mx-auto flex w-full max-w-6xl items-center gap-1 overflow-x-auto px-4 py-2 sm:px-6"
+          >
+            {(["all", ...CATEGORIES.map((c) => c.value)] as Tab[]).map((value) => {
+              const active = tab === value;
+              return (
+                <button
+                  key={value}
+                  data-tab={value}
+                  onClick={() => setTab(value)}
                   className={cn(
-                    "relative rounded-md px-1.5 py-px text-[11px] tabular-nums",
-                    active ? "bg-accent/15 text-accent-strong" : "text-faint",
+                    "relative flex shrink-0 cursor-pointer items-center gap-1 rounded-lg px-2 py-1.5 text-[12px] font-medium transition-colors sm:px-3 sm:text-[13px]",
+                    active ? "text-ink" : "text-muted hover:text-ink",
                   )}
                 >
-                  {counts.get(value) ?? 0}
-                </span>
-              </button>
-            );
-          })}
+                  {active ? (
+                    <motion.span
+                      layoutId="vault-tab"
+                      className="absolute inset-0 rounded-lg bg-accent-soft ring-1 ring-accent/15"
+                      transition={{ type: "spring", bounce: 0.15, duration: 0.35 }}
+                    />
+                  ) : null}
+                  <span className="relative capitalize text-current">
+                    {value === "all" ? "All" : CATEGORIES.find((c) => c.value === value)?.label}
+                  </span>
+                  <span
+                    className={cn(
+                      "relative rounded-md px-1 py-px text-[10px] tabular-nums sm:px-1.5 sm:text-[11px]",
+                      active ? "bg-accent/15 text-accent-strong" : "text-faint",
+                    )}
+                  >
+                    {counts.get(value) ?? 0}
+                  </span>
+                </button>
+              );
+            })}
+            <span aria-hidden className="w-2 shrink-0" />
+          </div>
+
+          {canScrollLeft ? (
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-app/95 to-transparent sm:hidden"
+            />
+          ) : null}
+          {canScrollRight ? (
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-app/95 to-transparent sm:hidden"
+            />
+          ) : null}
         </div>
       </div>
 
