@@ -37,6 +37,27 @@ export function isSensitiveType(type: string): boolean {
   return SENSITIVE.has(type as FieldType);
 }
 
+/** Placeholder shown instead of secret/code values in at-a-glance previews. */
+export const VALUE_MASK = "••••••••";
+
+/** True for the common affirmative spellings of a toggle value. */
+export function isToggleOn(raw: string): boolean {
+  return ["true", "1", "yes", "on", "enabled"].includes(
+    raw.trim().toLowerCase(),
+  );
+}
+
+/**
+ * Compact value text for cards, search results and the editor preview:
+ * sensitive values are masked, toggles collapse to On/Off, and empty
+ * values fall back to a dash.
+ */
+export function previewText(type: string, value: string): string {
+  if (isSensitiveType(type)) return VALUE_MASK;
+  if (type === "toggle") return isToggleOn(value) ? "On" : "Off";
+  return value || "—";
+}
+
 export interface FieldTypeMeta {
   label: string;
   description: string;
@@ -136,11 +157,6 @@ export const FIELD_TYPE_META: Record<FieldType, FieldTypeMeta> = {
 
 export function getFieldTypeMeta(type: string): FieldTypeMeta {
   return FIELD_TYPE_META[type as FieldType] ?? FIELD_TYPE_META.text;
-}
-
-/** Self-describing types (e.g. URL, Email, Password) don't need a custom name. */
-export function fieldNeedsName(type: string): boolean {
-  return !FIELD_TYPE_META[type as FieldType]?.autoName;
 }
 
 /** Resolve the display label for a field based on its type. */

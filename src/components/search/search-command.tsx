@@ -38,12 +38,6 @@ export function SearchCommand({
   );
 }
 
-function previewLabel(field: { value: string }) {
-  if (field.value === "true") return "On";
-  if (field.value === "false") return "Off";
-  return field.value || "—";
-}
-
 function SearchPalette({ onClose }: { onClose: () => void }) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -208,7 +202,7 @@ function SearchPalette({ onClose }: { onClose: () => void }) {
                           <span className="font-medium text-faint">
                             {item.previewFields[0].name}:
                           </span>{" "}
-                          {previewLabel(item.previewFields[0])}
+                          {item.previewFields[0].value}
                         </span>
                       ) : null}
                     </span>

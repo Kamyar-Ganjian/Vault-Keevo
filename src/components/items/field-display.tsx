@@ -4,7 +4,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { FiEye, FiEyeOff, FiExternalLink } from "react-icons/fi";
 import { CopyButton } from "@/components/items/copy-button";
-import { isSensitiveType, type FieldType } from "@/lib/field-types";
+import { isSensitiveType, isToggleOn, type FieldType } from "@/lib/field-types";
 import { cn, formatDate } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
 
@@ -141,9 +141,7 @@ function ValueBody({
 }
 
 function TogglePill({ raw }: { raw: string }) {
-  const on = ["true", "1", "yes", "on", "enabled"].includes(
-    raw.trim().toLowerCase(),
-  );
+  const on = isToggleOn(raw);
   return (
     <span className="inline-flex items-center gap-2">
       <Switch checked={on} disabled aria-label="Value" />

@@ -12,7 +12,8 @@ import { Button } from "@/components/ui/button";
 import { Input, Textarea, FormField } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Alert } from "@/components/ui/alert";
+import { Container } from "@/components/ui/container";
+import { StickyBand } from "@/components/ui/sticky-band";
 import { BackLink } from "@/components/ui/back-link";
 import { Section } from "@/components/ui/section";
 import { ItemIcon } from "@/components/items/item-icon";
@@ -24,8 +25,20 @@ import {
   updateItemAction,
 } from "@/lib/actions/items";
 import { itemSchema, emptyField, type ItemInput } from "@/lib/schemas";
-import { FIELD_TYPE_META, fieldLabel, isSensitiveType, type FieldType } from "@/lib/field-types";
-import { CATEGORIES, type ItemDetailData } from "@/lib/types";
+import {
+  FIELD_TYPE_META,
+  fieldLabel,
+  isSensitiveType,
+  isToggleOn,
+  previewText,
+  VALUE_MASK,
+  type FieldType,
+} from "@/lib/field-types";
+import {
+  CATEGORIES,
+  DEFAULT_APPEARANCE,
+  type ItemDetailData,
+} from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 function FieldIcon({ type, className }: { type: FieldType; className?: string }) {
@@ -79,7 +92,7 @@ export function ItemForm({
             icon: "box",
             category: "other",
             favorite: false,
-            appearance: { accent: "#6366f1" },
+            appearance: { ...DEFAULT_APPEARANCE },
             notes: "",
             fields: [emptyField()] as { name: string; type: "text"; value: string }[],
           },
@@ -128,8 +141,6 @@ export function ItemForm({
     setShowSecrets((s) => ({ ...s, [index]: !s[index] }));
   }
 
-  const fieldErrorName = errors.fields?.message as string | undefined;
-
   const submitLabel = mode === "create" ? "Create item" : "Save changes";
   const cancel = () =>
     mode === "edit" && item
@@ -151,8 +162,8 @@ export function ItemForm({
         }
       }}
     >
-<div className="sticky top-14 z-30 border-b border-line/80 bg-app/90 backdrop-blur-xl lg:top-0">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+<StickyBand>
+        <Container className="flex items-center justify-between gap-3 py-3">
           <BackLink href={mode === "edit" && item ? `/vault/items/${item.id}` : "/vault"}>
             ← {mode === "edit" ? "Back to item" : "Vault"}
           </BackLink>
@@ -164,9 +175,9 @@ export function ItemForm({
               {saving ? "Saving…" : submitLabel}
             </Button>
           </div>
-        </div>
-      </div>
-      <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6">
+        </Container>
+      </StickyBand>
+      <Container className="py-6">
       <div className="grid items-start gap-8 lg:grid-cols-[1fr_360px]">
         <div className="space-y-9">
           <Section title="Basics">
@@ -299,7 +310,7 @@ export function ItemForm({
                       {meta.kind === "textarea" ? (
                         <Textarea
                           rows={2}
-                          placeholder={sensitive && !shouldShow ? "••••••••" : "Value"}
+                          placeholder={sensitive && !shouldShow ? VALUE_MASK : "Value"}
                           aria-label={`${field.name || "Field"} value`}
                           className={cn(
                             "font-mono text-[13px]",
@@ -311,27 +322,28 @@ export function ItemForm({
                         <Controller
                           control={control}
                           name={`fields.${index}.value`}
-                          render={({ field: toggleField }) => (
-                            <div className="flex h-9 items-center gap-2.5 px-1">
-                              <Switch
-                                checked={toggleField.value === "true"}
-                                onCheckedChange={(checked) =>
-                                  toggleField.onChange(checked ? "true" : "false")
-                                }
-                                aria-label="Value"
-                              />
-                              <span
-                                className={cn(
-                                  "text-xs font-medium",
-                                  toggleField.value === "true"
-                                    ? "text-mint"
-                                    : "text-faint",
-                                )}
-                              >
-                                {toggleField.value === "true" ? "On" : "Off"}
-                              </span>
-                            </div>
-                          )}
+                          render={({ field: toggleField }) => {
+                            const on = isToggleOn(toggleField.value);
+                            return (
+                              <div className="flex h-9 items-center gap-2.5 px-1">
+                                <Switch
+                                  checked={on}
+                                  onCheckedChange={(checked) =>
+                                    toggleField.onChange(checked ? "true" : "false")
+                                  }
+                                  aria-label="Value"
+                                />
+                                <span
+                                  className={cn(
+                                    "text-xs font-medium",
+                                    on ? "text-mint" : "text-faint",
+                                  )}
+                                >
+                                  {on ? "On" : "Off"}
+                                </span>
+                              </div>
+                            );
+                          }}
                         />
                       ) : (
                         <Input
@@ -439,7 +451,7 @@ export function ItemForm({
           />
         </aside>
       </div>
-      </div>
+      </Container>
     </form>
   );
 }
@@ -559,7 +571,7 @@ function LivePreview({
                     isSensitiveType(f.type) && "font-mono tracking-widest",
                   )}
                 >
-                  {isSensitiveType(f.type) ? "••••••••" : f.value || "—"}
+                  {previewText(f.type, f.value)}
                 </span>
               </div>
             ))}

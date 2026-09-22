@@ -91,7 +91,7 @@ export function ItemCard({ item }: { item: ItemCardData }) {
                         "font-mono tracking-widest text-muted",
                     )}
                   >
-                    {displayValue(field)}
+                    {field.value}
                   </span>
                 </div>
               ))}
@@ -109,17 +109,10 @@ export function ItemCard({ item }: { item: ItemCardData }) {
             <span className="text-[11px] text-faint">
               {relativeTime(item.updatedAt)}
             </span>
-            <FiChevronRight className="h-4 w-4 shrink-0 text-faint opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
-          </div>
-        </div>
-      </Link>
+<FiChevronRight className="h-4 w-4 shrink-0 text-faint opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+      </div>
+    </div>
+    </Link>
     </div>
   );
-}
-
-function displayValue(field: { type: string; value: string }) {
-  if (isSensitiveType(field.type)) return field.value;
-  if (field.value === "true") return "On";
-  if (field.value === "false") return "Off";
-  return field.value || "—";
 }

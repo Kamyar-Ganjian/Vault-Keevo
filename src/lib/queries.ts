@@ -1,7 +1,11 @@
 import "server-only";
 import { prisma } from "@/lib/db";
 import { decryptSecret, isEncrypted } from "@/lib/secrets";
-import { getFieldTypeMeta, isSensitiveType } from "@/lib/field-types";
+import {
+  getFieldTypeMeta,
+  isSensitiveType,
+  previewText,
+} from "@/lib/field-types";
 import {
   CATEGORY_VALUES,
   DEFAULT_APPEARANCE,
@@ -67,15 +71,9 @@ function toCardData(item: {
     previewFields: item.fields.map((field) => ({
       name: field.name,
       type: field.type,
-      value: previewValue(field),
+      value: previewText(field.type, field.value ?? ""),
     })),
   };
-}
-
-function previewValue(field: { type: string; value: string | null }): string {
-  const value = field.value ?? "";
-  if (isSensitiveType(field.type)) return "••••••••";
-  return value;
 }
 
 export async function getItemDetail(
@@ -105,7 +103,7 @@ export async function getItemDetail(
     previewFields: item.fields.slice(0, 3).map((field) => ({
       name: field.name,
       type: validFieldType(field.type),
-      value: previewValue(field),
+      value: previewText(field.type, field.value ?? ""),
     })),
     fields: item.fields.map((field) => ({
       id: field.id,

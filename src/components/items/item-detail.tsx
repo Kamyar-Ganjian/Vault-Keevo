@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/dropdown";
 import { Dialog } from "@/components/ui/dialog";
 import { BackLink } from "@/components/ui/back-link";
+import { Container } from "@/components/ui/container";
+import { StickyBand } from "@/components/ui/sticky-band";
 import { SectionHeading } from "@/components/ui/section";
 import { CategoryBadge } from "@/components/ui/category-badge";
 import {
@@ -75,8 +77,8 @@ export function ItemDetail({ item }: { item: ItemDetailData }) {
 
   return (
     <main className="pb-20">
-      <div className="sticky top-14 z-30 border-b border-line/80 bg-app/90 backdrop-blur-xl lg:top-0">
-        <div className="mx-auto flex w-full max-w-2xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+      <StickyBand>
+        <Container className="flex max-w-2xl items-center justify-between gap-3 py-3">
           <BackLink href="/vault">← Vault</BackLink>
           <div className="flex items-center gap-1">
           <Button asChild variant="ghost" size="sm" className="text-muted">
@@ -112,10 +114,10 @@ export function ItemDetail({ item }: { item: ItemDetailData }) {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        </div>
-      </div>
+        </Container>
+      </StickyBand>
 
-      <div className="mx-auto w-full max-w-2xl px-4 pt-6 sm:px-6">
+      <Container className="max-w-2xl pt-6">
       <motion.section
         {...ENTER}
         transition={{ type: "spring", duration: 0.5, bounce: 0.08 }}
@@ -277,7 +279,7 @@ export function ItemDetail({ item }: { item: ItemDetailData }) {
           </>
         }
       />
-      </div>
+      </Container>
     </main>
   );
 }

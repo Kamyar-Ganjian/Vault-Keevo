@@ -6,6 +6,7 @@ import { requireUserId } from "@/lib/actions/auth";
 import { auth } from "@/lib/auth";
 import { VaultDashboard } from "@/components/vault/vault-dashboard";
 import { Button } from "@/components/ui/button";
+import { Container } from "@/components/ui/container";
 import { pluralize } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -27,7 +28,7 @@ export default async function VaultPage() {
   return (
     <main className="pb-16">
       <div className="hidden border-b border-line/80 bg-app lg:flex">
-        <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-4 sm:px-6">
+        <Container className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-4">
           <div>
             <p className="inline-flex items-center gap-1.5 text-md font-medium text-muted">
               <span className="h-1.5 w-1.5 rounded-full bg-accent" />
@@ -47,7 +48,7 @@ export default async function VaultPage() {
               </Link>
             </Button>
           </div>
-        </div>
+        </Container>
       </div>
       <VaultDashboard items={items} />
     </main>

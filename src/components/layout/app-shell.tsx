@@ -12,6 +12,7 @@ import { SearchCommand } from "@/components/search/search-command";
 import { VaultAtmosphere } from "@/components/vault-core";
 import { Kbd } from "@/components/ui/kbd";
 import { Button } from "@/components/ui/button";
+import { Container } from "@/components/ui/container";
 import { cn } from "@/lib/utils";
 
 function SidebarLink({
@@ -99,8 +100,8 @@ export function AppShell({
 
       <div className="flex min-w-0 flex-1 flex-col lg:pl-60">
         <header className="sticky top-0 z-40 h-14 border-b border-line bg-app lg:hidden">
-          <div className="mx-auto flex h-14 max-w-6xl items-center gap-1.5 px-3.5 sm:gap-2 sm:px-6">
-            <Logo />
+          <Container className="flex h-14 items-center gap-1.5 px-3.5 sm:gap-2">
+          <Logo />
 
             <div className="flex-1" />
 
@@ -126,7 +127,7 @@ export function AppShell({
 
             <ThemeMenu />
             <UserMenu name={user.name} email={user.email} />
-          </div>
+          </Container>
         </header>
 
         <main className="relative flex-1">

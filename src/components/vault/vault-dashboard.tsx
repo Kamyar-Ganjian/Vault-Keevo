@@ -7,6 +7,8 @@ import { FiArchive, FiArrowRight, FiPlus, FiStar } from "react-icons/fi";
 import { ItemCard } from "@/components/vault/item-card";
 import { VaultCore } from "@/components/vault-core";
 import { SectionHeading } from "@/components/ui/section";
+import { Container } from "@/components/ui/container";
+import { StickyBand } from "@/components/ui/sticky-band";
 import type { ItemCardData, Category } from "@/lib/types";
 import { CATEGORIES } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -60,7 +62,7 @@ export function VaultDashboard({ items }: { items: ItemCardData[] }) {
 
   if (everythingEmpty) {
     return (
-      <div className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
+      <Container className="py-14">
         <div className="flex flex-col items-center py-8 text-center">
           <VaultCore size={84} />
           <h2 className="mt-7 text-xl font-semibold tracking-tight text-ink">
@@ -78,17 +80,17 @@ export function VaultDashboard({ items }: { items: ItemCardData[] }) {
             Add your first item
           </Link>
         </div>
-      </div>
+      </Container>
     );
   }
 
   return (
     <div>
-      <div className="sticky top-14 z-30 border-b border-line/80 bg-app/90 backdrop-blur-xl lg:top-0">
+      <StickyBand>
         <div className="relative mx-auto w-full max-w-6xl">
           <div
             ref={stripRef}
-            className="scrollbar-none mx-auto flex w-full max-w-6xl items-center gap-1 overflow-x-auto px-4 py-2 sm:px-6"
+            className="scrollbar-none flex w-full items-center gap-1 overflow-x-auto px-4 py-2 sm:px-6"
           >
             {(["all", ...CATEGORIES.map((c) => c.value)] as Tab[]).map((value) => {
               const active = tab === value;
@@ -139,9 +141,9 @@ export function VaultDashboard({ items }: { items: ItemCardData[] }) {
             />
           ) : null}
         </div>
-      </div>
+      </StickyBand>
 
-      <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6">
+      <Container className="py-6">
         {tab === "all" && favorites.length > 0 ? (
           <section>
             <h3 className="flex items-center gap-2 text-[13px] font-semibold tracking-wide text-muted">
@@ -214,7 +216,7 @@ export function VaultDashboard({ items }: { items: ItemCardData[] }) {
             </div>
           )}
         </section>
-      </div>
+      </Container>
     </div>
   );
 }

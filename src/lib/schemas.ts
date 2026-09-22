@@ -65,3 +65,8 @@ export type ItemInput = z.infer<typeof itemSchema>;
 export function emptyField() {
   return { name: "", type: "text" as const, value: "" };
 }
+
+/** First validation message, with a fallback for empty issue lists. */
+export function firstIssue(error: z.ZodError, fallback = "Check your input.") {
+  return error.issues[0]?.message ?? fallback;
+}

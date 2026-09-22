@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
 import { signIn, signOut, auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { loginSchema, signupSchema } from "@/lib/schemas";
+import { loginSchema, signupSchema, firstIssue } from "@/lib/schemas";
 
 export async function isAuthenticated() {
   const session = await auth();
@@ -33,7 +33,7 @@ async function userStillExists(userId: string): Promise<boolean> {
 export async function signupAction(input: unknown): Promise<{ error?: string }> {
   const parsed = signupSchema.safeParse(input);
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Check your input." };
+    return { error: firstIssue(parsed.error) };
   }
 
   const { name, email, password } = parsed.data;
@@ -62,7 +62,7 @@ export async function signupAction(input: unknown): Promise<{ error?: string }> 
 export async function loginAction(input: unknown): Promise<{ error?: string }> {
   const parsed = loginSchema.safeParse(input);
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Check your input." };
+    return { error: firstIssue(parsed.error) };
   }
 
   try {

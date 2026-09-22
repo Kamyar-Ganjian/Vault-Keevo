@@ -4,17 +4,24 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
 import { encryptSecret } from "@/lib/secrets";
 import { isSensitiveType } from "@/lib/field-types";
-import { itemSchema, type ItemInput } from "@/lib/schemas";
+import { itemSchema, firstIssue, type ItemInput } from "@/lib/schemas";
 import { searchVaultItems } from "@/lib/queries";
 import { requireUserId } from "./auth";
 import type { ItemCardData } from "@/lib/types";
 
 type ActionResult = { error?: string; id?: string };
 
+const NOT_FOUND: ActionResult = { error: "Item not found." };
+
+/** An item that belongs to the given user, or null when it doesn't exist. */
+function ownedItem(userId: string, id: string) {
+  return prisma.item.findFirst({ where: { id, userId } });
+}
+
 function assertValid(input: unknown): ItemInput {
   const parsed = itemSchema.safeParse(input);
   if (!parsed.success) {
-    throw new Error(parsed.error.issues[0]?.message ?? "Invalid item data.");
+    throw new Error(firstIssue(parsed.error, "Invalid item data."));
   }
   return parsed.data;
 }
@@ -71,8 +78,8 @@ export async function updateItemAction(
   if (!id) return { error: "Missing item id." };
   const valid = assertValid(input);
 
-  const item = await prisma.item.findFirst({ where: { id, userId } });
-  if (!item) return { error: "Item not found." };
+  const item = await ownedItem(userId, id);
+  if (!item) return NOT_FOUND;
 
   try {
     await prisma.$transaction([
@@ -95,8 +102,8 @@ export async function updateItemAction(
 
 export async function deleteItemAction(id: string): Promise<ActionResult> {
   const userId = await requireUserId();
-  const item = await prisma.item.findFirst({ where: { id, userId } });
-  if (!item) return { error: "Item not found." };
+  const item = await ownedItem(userId, id);
+  if (!item) return NOT_FOUND;
 
   try {
     await prisma.item.delete({ where: { id } });
@@ -113,7 +120,7 @@ export async function duplicateItemAction(id: string): Promise<ActionResult> {
     where: { id, userId },
     include: { fields: { orderBy: { position: "asc" } } },
   });
-  if (!item) return { error: "Item not found." };
+  if (!item) return NOT_FOUND;
 
   try {
     const copy = await prisma.item.create({
@@ -147,8 +154,8 @@ export async function toggleFavoriteAction(
   id: string,
 ): Promise<ActionResult & { favorite?: boolean }> {
   const userId = await requireUserId();
-  const item = await prisma.item.findFirst({ where: { id, userId } });
-  if (!item) return { error: "Item not found." };
+  const item = await ownedItem(userId, id);
+  if (!item) return NOT_FOUND;
 
   try {
     const updated = await prisma.item.update({
