@@ -151,23 +151,23 @@ export function ItemForm({
         }
       }}
     >
-      <div className="flex items-center justify-between gap-3">
-        <BackLink href={mode === "edit" && item ? `/vault/items/${item.id}` : "/vault"}>
-          ← {mode === "edit" ? "Back to item" : "Vault"}
-        </BackLink>
-        <div className="flex items-center gap-2">
-          <Button type="button" variant="secondary" onClick={cancel} disabled={saving}>
-            Cancel
-          </Button>
-          <Button type="submit" disabled={saving}>
-            {saving ? "Saving…" : submitLabel}
-          </Button>
+<div className="sticky top-14 z-30 border-b border-line/80 bg-app/90 backdrop-blur-xl lg:top-0">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+          <BackLink href={mode === "edit" && item ? `/vault/items/${item.id}` : "/vault"}>
+            ← {mode === "edit" ? "Back to item" : "Vault"}
+          </BackLink>
+          <div className="flex items-center gap-2">
+            <Button type="button" variant="secondary" onClick={cancel} disabled={saving}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={saving}>
+              {saving ? "Saving…" : submitLabel}
+            </Button>
+          </div>
         </div>
       </div>
-
-      {fieldErrorName ? <Alert className="mt-4">{fieldErrorName}</Alert> : null}
-
-      <div className="mt-7 grid items-start gap-8 lg:grid-cols-[1fr_360px]">
+      <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6">
+      <div className="grid items-start gap-8 lg:grid-cols-[1fr_360px]">
         <div className="space-y-9">
           <Section title="Basics">
             <div className="space-y-4">
@@ -427,8 +427,8 @@ export function ItemForm({
           </div>
         </div>
 
-        <aside className="lg:sticky lg:top-8">
-          <LivePreview
+        <aside className="lg:sticky lg:top-20">
+<LivePreview
             name={values.name}
             description={values.description}
             icon={values.icon}
@@ -439,17 +439,6 @@ export function ItemForm({
           />
         </aside>
       </div>
-
-      <div className="sticky bottom-3 z-20 mt-8 flex items-center gap-2 rounded-xl border border-line bg-surface/85 px-3.5 py-2.5 shadow-elev backdrop-blur-xl sm:px-4">
-        <p className="min-w-0 flex-1 truncate text-[11px] text-faint sm:text-xs">
-          Leave blank anything you do not need — empty fields are skipped.
-        </p>
-        <Button type="button" variant="secondary" onClick={cancel} disabled={saving}>
-          Cancel
-        </Button>
-        <Button type="submit" disabled={saving}>
-          {saving ? "Saving…" : submitLabel}
-        </Button>
       </div>
     </form>
   );

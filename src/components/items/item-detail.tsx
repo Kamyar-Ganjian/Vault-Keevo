@@ -74,10 +74,11 @@ export function ItemDetail({ item }: { item: ItemDetailData }) {
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-4 pb-20 pt-6 sm:px-6 lg:pt-10">
-      <div className="flex items-center justify-between gap-3">
-        <BackLink href="/vault">← Vault</BackLink>
-        <div className="flex items-center gap-1">
+    <main className="pb-20">
+      <div className="sticky top-14 z-30 border-b border-line/80 bg-app/90 backdrop-blur-xl lg:top-0">
+        <div className="mx-auto flex w-full max-w-2xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+          <BackLink href="/vault">← Vault</BackLink>
+          <div className="flex items-center gap-1">
           <Button asChild variant="ghost" size="sm" className="text-muted">
             <Link href={`/vault/items/${item.id}/edit`}>
               <FiEdit2 className="h-4 w-4" />
@@ -111,8 +112,10 @@ export function ItemDetail({ item }: { item: ItemDetailData }) {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+        </div>
       </div>
 
+      <div className="mx-auto w-full max-w-2xl px-4 pt-6 sm:px-6">
       <motion.section
         {...ENTER}
         transition={{ type: "spring", duration: 0.5, bounce: 0.08 }}
@@ -274,6 +277,7 @@ export function ItemDetail({ item }: { item: ItemDetailData }) {
           </>
         }
       />
+      </div>
     </main>
   );
 }

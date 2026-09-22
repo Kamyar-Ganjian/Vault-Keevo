@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default async function NewItemPage() {
   await requireUserId();
   return (
-    <main className="mx-auto max-w-6xl px-4 pb-20 pt-6 sm:px-6">
+    <main className="pb-20">
       <ItemForm mode="create" />
     </main>
   );

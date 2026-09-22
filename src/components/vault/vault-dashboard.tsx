@@ -29,6 +29,7 @@ export function VaultDashboard({ items }: { items: ItemCardData[] }) {
 
   if (everythingEmpty) {
     return (
+      <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6">
       <div className="flex flex-col items-center py-24 text-center">
         <VaultCore size={92} />
         <h2 className="mt-7 text-xl font-semibold tracking-tight text-ink">
@@ -46,13 +47,14 @@ export function VaultDashboard({ items }: { items: ItemCardData[] }) {
           Add your first item
         </Link>
       </div>
+      </div>
     );
   }
 
   return (
     <div>
-      <div className="sticky top-14 z-30 -mx-4 mb-1 border-b border-line bg-app px-4 py-2.5 lg:top-0 sm:-mx-6 sm:px-6">
-        <div className="scrollbar-none -mx-2 flex gap-1 overflow-x-auto px-2 py-1">
+      <div className="sticky top-14 z-30 border-b border-line/80 bg-app/90 backdrop-blur-xl lg:top-0">
+        <div className="scrollbar-none mx-auto flex w-full max-w-6xl items-center gap-1 overflow-x-auto px-3 py-2 sm:px-6">
           {(["all", ...CATEGORIES.map((c) => c.value)] as Tab[]).map((value) => {
             const active = tab === value;
             return (
@@ -88,7 +90,7 @@ export function VaultDashboard({ items }: { items: ItemCardData[] }) {
         </div>
       </div>
 
-      <div className="pt-4">
+      <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6">
         {tab === "all" && favorites.length > 0 ? (
           <section>
             <h3 className="flex items-center gap-2 text-[13px] font-semibold tracking-wide text-muted">

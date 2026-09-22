@@ -17,7 +17,7 @@ export default async function EditItemPage({
   if (!item) notFound();
 
   return (
-    <main className="mx-auto max-w-6xl px-4 pb-20 pt-6 sm:px-6">
+    <main className="pb-20">
       <ItemForm mode="edit" item={item} />
     </main>
   );
