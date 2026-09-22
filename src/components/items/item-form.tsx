@@ -1,11 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
-import { FiArrowUp, FiArrowDown, FiEye, FiEyeOff, FiPlus, FiTrash2 } from "react-icons/fi";
+import { FiArrowUp, FiArrowDown, FiChevronDown, FiDroplet, FiEye, FiEyeOff, FiFileText, FiKey, FiPlus, FiTrash2 } from "react-icons/fi";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -43,6 +43,9 @@ export function ItemForm({
   const router = useRouter();
   const [showSecrets, setShowSecrets] = useState<Record<number, boolean>>({});
   const [saving, setSaving] = useState(false);
+  const [openFields, setOpenFields] = useState((item?.fields.length ?? 0) > 0);
+  const [openNotes, setOpenNotes] = useState(Boolean(item?.notes));
+  const [openLook, setOpenLook] = useState(false);
 
   const {
     register,
@@ -181,14 +184,6 @@ export function ItemForm({
                 />
               </FormField>
 
-              <FormField label="Description" htmlFor="description">
-                <Input
-                  id="description"
-                  placeholder="A short note about this item"
-                  {...register("description")}
-                />
-              </FormField>
-
               <div className="grid gap-4 sm:grid-cols-2">
                 <FormField label="Category" htmlFor="category">
                   <Select id="category" {...register("category")}>
@@ -219,20 +214,14 @@ export function ItemForm({
             </div>
           </Section>
 
-          <Section title="Icon">
-            <Controller
-              control={control}
-              name="icon"
-              render={({ field }) => (
-                <IconPicker value={field.value} onChange={field.onChange} />
-              )}
-            />
-          </Section>
-
-          <Section
-            title={`Fields (${fields.length}${fields.length >= 100 ? ", max 100" : ""})`}
-            hint="Custom fields with a type, a name and a value. Secret and code values are encrypted."
-          >
+          <div className="overflow-hidden rounded-xl bg-surface ring-1 ring-line divide-y divide-line/60">
+            <DetailToggle
+              open={openFields}
+              onToggle={() => setOpenFields((o) => !o)}
+              icon={<FiKey className="h-[17px] w-[17px]" />}
+              label="Credential fields"
+              meta={fields.length > 0 ? `${fields.length}` : undefined}
+            >
             <div className="space-y-2.5">
               {fields.map((field, index) => {
                 const type = (values.fields[index]?.type as FieldType) || "text";
@@ -253,7 +242,7 @@ export function ItemForm({
                     <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                       <FieldIcon
                         type={type}
-                        className="h-3.5 w-3.5 shrink-0 text-faint"
+                        className="h-4 w-4 shrink-0 text-faint"
                       />
                       <input
                         placeholder="Field name"
@@ -398,22 +387,45 @@ export function ItemForm({
               onClick={() => append(emptyField())}
               disabled={fields.length >= 100}
             >
-              <FiPlus className="h-3.5 w-3.5" />
+              <FiPlus className="h-4 w-4" />
               Add field
             </Button>
-          </Section>
+            </DetailToggle>
 
-          <Section title="Notes">
-            <Textarea
-              rows={4}
-              placeholder="Anything else worth remembering…"
-              className="mt-1"
-              {...register("notes")}
-            />
-          </Section>
+            <DetailToggle
+              open={openNotes}
+              onToggle={() => setOpenNotes((o) => !o)}
+              icon={<FiFileText className="h-[17px] w-[17px]" />}
+              label="Notes"
+            >
+              <Textarea
+                rows={4}
+                placeholder="Anything worth remembering…"
+                {...register("notes")}
+              />
+            </DetailToggle>
+
+            <DetailToggle
+              open={openLook}
+              onToggle={() => setOpenLook((o) => !o)}
+              icon={<FiDroplet className="h-[17px] w-[17px]" />}
+              label="Icon & look"
+            >
+              <div className="space-y-7">
+                <IconPicker
+                  value={values.icon}
+                  onChange={(next) => setValue("icon", next)}
+                />
+                <AppearanceEditor
+                  value={appearance}
+                  onChange={(next) => setValue("appearance", next)}
+                />
+              </div>
+            </DetailToggle>
+          </div>
         </div>
 
-        <aside className="space-y-9 lg:sticky lg:top-8">
+        <aside className="lg:sticky lg:top-8">
           <LivePreview
             name={values.name}
             description={values.description}
@@ -423,13 +435,6 @@ export function ItemForm({
             fields={previewFields}
             notes={values.notes ?? ""}
           />
-
-          <Section title="Appearance">
-            <AppearanceEditor
-              value={appearance}
-              onChange={(next) => setValue("appearance", next)}
-            />
-          </Section>
         </aside>
       </div>
     </form>
@@ -445,6 +450,59 @@ function propertiesFromType(type: FieldType) {
     default:
       return undefined;
   }
+}
+
+function DetailToggle({
+  open,
+  onToggle,
+  icon,
+  label,
+  meta,
+  children,
+}: {
+  open: boolean;
+  onToggle: () => void;
+  icon: ReactNode;
+  label: string;
+  meta?: string;
+  children: ReactNode;
+}) {
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        className="flex w-full cursor-pointer items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-surface-2/40 focus-visible:bg-surface-2/40 focus-visible:outline-none"
+      >
+        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent-strong">
+          {icon}
+        </span>
+        <span className="flex-1 text-sm font-medium text-ink">{label}</span>
+        {meta ? (
+          <span className="rounded-full bg-surface-2 px-2 py-0.5 text-[11px] font-semibold text-muted ring-1 ring-line">
+            {meta}
+          </span>
+        ) : null}
+        <FiChevronDown
+          className={cn(
+            "h-4 w-4 shrink-0 text-faint transition-transform duration-200",
+            open && "rotate-180",
+          )}
+        />
+      </button>
+      {open ? (
+        <motion.div
+          initial={{ opacity: 0, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.15 }}
+          className="px-4 pb-5 pt-1"
+        >
+          {children}
+        </motion.div>
+      ) : null}
+    </div>
+  );
 }
 
 function LivePreview({
@@ -503,13 +561,7 @@ function LivePreview({
               </div>
             ))}
           </div>
-        ) : (
-          <div className="mt-3.5 border border-dashed border-line-strong rounded-lg px-3 py-3">
-            <p className="text-center text-[11px] font-medium text-faint">
-              No fields yet — add one in the editor
-            </p>
-          </div>
-        )}
+        ) : null}
 
         {hasNotes ? (
           <div className="mt-3 border-t border-line pt-2.5">

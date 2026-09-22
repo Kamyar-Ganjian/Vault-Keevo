@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useForm, type Path } from "react-hook-form";
-import { FiArchive, FiEye, FiEyeOff, FiLock, FiZap } from "react-icons/fi";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 import { toast } from "sonner";
 import { LoginInput, SignupInput, loginSchema, signupSchema } from "@/lib/schemas";
 import { loginAction, signupAction } from "@/lib/actions/auth";
@@ -104,11 +104,6 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
               <h1 className="mt-5 text-xl font-semibold tracking-tight text-ink">
                 {isLogin ? "Welcome back" : "Create your vault"}
               </h1>
-              <p className="mt-1.5 text-sm text-muted">
-                {isLogin
-                  ? "Sign in to Keevo to see your items."
-                  : "Everything you use every day, in one safe place."}
-              </p>
             </div>
 
             {serverError ? <Alert className="mb-4">{serverError}</Alert> : null}
@@ -222,38 +217,13 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
               )}
             </p>
           </div>
-
-          {!isLogin ? (
-            <div className="mt-6 grid grid-cols-3 gap-2 sm:gap-3">
-              <Feature icon={FiZap} label="Instant access" />
-              <Feature icon={FiLock} label="Encrypted at rest" />
-              <Feature icon={FiArchive} label="In one safe place" />
-            </div>
-          ) : null}
         </div>
       </div>
 
       <footer className="flex items-center justify-center gap-1.5 pb-8 text-[11px] text-faint">
         <Mark className="h-3 w-[76px]" />
-        Keevo — your personal vault
+        Keevo
       </footer>
-    </div>
-  );
-}
-
-function Feature({
-  icon: Icon,
-  label,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-}) {
-  return (
-    <div className="flex flex-col items-center gap-1.5 rounded-xl bg-surface px-2 py-3.5 text-center ring-1 ring-line">
-      <span className="grid h-7 w-7 place-items-center rounded-lg bg-accent-soft text-accent-strong">
-        <Icon className="h-4 w-4" />
-      </span>
-      <span className="text-[11px] font-medium text-muted">{label}</span>
     </div>
   );
 }

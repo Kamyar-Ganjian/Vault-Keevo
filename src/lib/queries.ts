@@ -40,7 +40,14 @@ export async function getVaultItems(userId: string): Promise<ItemCardData[]> {
   const items = await prisma.item.findMany({
     where: { userId },
     orderBy: { updatedAt: "desc" },
-    include: { fields: { select: { id: true } } },
+    include: {
+      _count: { select: { fields: true } },
+      fields: {
+        select: { name: true, type: true, value: true },
+        orderBy: { position: "asc" },
+        take: 3,
+      },
+    },
   });
   return items.map((item) => toCardData(item));
 }
@@ -55,7 +62,8 @@ function toCardData(item: {
   appearance: string | null;
   createdAt: Date;
   updatedAt: Date;
-  fields: { id: string }[];
+  _count: { fields: number };
+  fields: { name: string; type: string; value: string | null }[];
 }): ItemCardData {
   return {
     id: item.id,
@@ -65,10 +73,21 @@ function toCardData(item: {
     category: validCategory(item.category),
     favorite: item.favorite,
     appearance: parseAppearance(item.appearance),
-    fieldCount: item.fields.length,
+    fieldCount: item._count.fields,
     createdAt: item.createdAt.toISOString(),
     updatedAt: item.updatedAt.toISOString(),
+    previewFields: item.fields.map((field) => ({
+      name: field.name,
+      type: field.type,
+      value: previewValue(field),
+    })),
   };
+}
+
+function previewValue(field: { type: string; value: string | null }): string {
+  const value = field.value ?? "";
+  if (isSensitiveType(field.type)) return "••••••••";
+  return value;
 }
 
 export async function getItemDetail(
@@ -95,6 +114,11 @@ export async function getItemDetail(
     createdAt: item.createdAt.toISOString(),
     updatedAt: item.updatedAt.toISOString(),
     notes: item.notes ?? "",
+    previewFields: item.fields.slice(0, 3).map((field) => ({
+      name: field.name,
+      type: validFieldType(field.type),
+      value: previewValue(field),
+    })),
     fields: item.fields.map((field) => ({
       id: field.id,
       name: field.name,
@@ -147,7 +171,14 @@ export async function searchVaultItems(
     },
     orderBy: { updatedAt: "desc" },
     take: limit,
-    include: { fields: { select: { id: true } } },
+    include: {
+      _count: { select: { fields: true } },
+      fields: {
+        select: { name: true, type: true, value: true },
+        orderBy: { position: "asc" },
+        take: 3,
+      },
+    },
   });
   return items.map(toCardData);
 }

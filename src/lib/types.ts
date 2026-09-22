@@ -68,6 +68,8 @@ export interface ItemCardData {
   fieldCount: number;
   createdAt: string;
   updatedAt: string;
+  /** First few fields for at-a-glance previews; sensitive values are masked. */
+  previewFields: { name: string; type: string; value: string }[];
 }
 
 /** Full representation used by the detail + editor pages (decrypted). */

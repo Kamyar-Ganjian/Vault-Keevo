@@ -29,13 +29,13 @@ function SidebarLink({
     <Link
       href={href}
       className={cn(
-        "flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13.5px] font-medium transition-colors",
+        "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
         active
           ? "bg-accent-soft text-ink"
           : "text-muted hover:bg-surface-2 hover:text-ink",
       )}
     >
-      <span className="text-[15px]">{icon}</span>
+      <span className="grid h-5 w-5 shrink-0 place-items-center">{icon}</span>
       <span className="flex-1">{children}</span>
     </Link>
   );
@@ -72,21 +72,21 @@ export function AppShell({
         </div>
 
         <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-4">
-          <SidebarLink href="/vault" active={vaultActive} icon={<FiArchive className="h-[17px] w-[17px]" />}>
+          <SidebarLink href="/vault" active={vaultActive} icon={<FiArchive className="h-[19px] w-[19px]" />}>
             Vault
           </SidebarLink>
           <button
             onClick={() => setSearchOpen(true)}
             className={cn(
-              "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13.5px] font-medium transition-colors",
+              "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors",
               "text-muted hover:bg-surface-2 hover:text-ink",
             )}
           >
-            <FiSearch className="h-[17px] w-[17px]" />
+            <FiSearch className="h-[19px] w-[19px]" />
             <span className="flex-1">Search</span>
             <Kbd>⌘K</Kbd>
           </button>
-          <SidebarLink href="/vault/new" icon={<FiPlus className="h-[17px] w-[17px]" />}>
+          <SidebarLink href="/vault/new" icon={<FiPlus className="h-[19px] w-[19px]" />}>
             New item
           </SidebarLink>
         </nav>

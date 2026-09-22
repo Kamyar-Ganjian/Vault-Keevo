@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { FiArchive, FiPlus } from "react-icons/fi";
 import { getVaultItems } from "@/lib/queries";
 import { requireUserId } from "@/lib/actions/auth";
 import { auth } from "@/lib/auth";
 import { VaultDashboard } from "@/components/vault/vault-dashboard";
+import { Button } from "@/components/ui/button";
 import { pluralize } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -32,13 +35,19 @@ export default async function VaultPage() {
           <h1 className="mt-1.5 text-[28px] font-semibold leading-tight tracking-tight text-ink sm:text-[32px]">
             Your vault
           </h1>
-          <p className="mt-1.5 text-sm text-muted">
-            Everything important, kept in one place.
-          </p>
         </div>
-        <p className="inline-flex items-center gap-2 rounded-full bg-surface px-3.5 py-2 text-[13px] font-medium text-muted ring-1 ring-line">
-          {pluralize(items.length, "item")}
-        </p>
+        <div className="flex items-center gap-2.5">
+          <p className="inline-flex items-center gap-2 rounded-full bg-surface px-3.5 py-2 text-[13px] font-medium text-muted ring-1 ring-line">
+            <FiArchive className="h-4 w-4 text-faint" />
+            {pluralize(items.length, "item")}
+          </p>
+          <Button asChild>
+            <Link href="/vault/new">
+              <FiPlus className="h-4 w-4" />
+              New item
+            </Link>
+          </Button>
+        </div>
       </div>
       <VaultDashboard items={items} />
     </main>

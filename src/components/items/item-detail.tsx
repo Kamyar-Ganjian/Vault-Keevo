@@ -27,6 +27,7 @@ import {
 } from "@/lib/actions/items";
 import { useFavorite } from "@/hooks/use-favorite";
 import { isSensitiveType } from "@/lib/field-types";
+import { categoryLabel } from "@/lib/types";
 import type { ItemDetailData } from "@/lib/types";
 import { cn, formatDate, pluralize } from "@/lib/utils";
 
@@ -79,7 +80,7 @@ export function ItemDetail({ item }: { item: ItemDetailData }) {
         <div className="flex items-center gap-1">
           <Button asChild variant="ghost" size="sm" className="text-muted">
             <Link href={`/vault/items/${item.id}/edit`}>
-              <FiEdit2 className="h-3.5 w-3.5" />
+              <FiEdit2 className="h-4 w-4" />
               Edit
             </Link>
           </Button>
@@ -154,7 +155,7 @@ export function ItemDetail({ item }: { item: ItemDetailData }) {
                 {item.name}
               </h1>
               <p className="mt-1 truncate text-sm text-muted">
-                {item.description || "Kept safe in your vault"}
+                {item.description || categoryLabel(item.category)}
               </p>
             </div>
             <button

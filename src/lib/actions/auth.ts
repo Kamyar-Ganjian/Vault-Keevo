@@ -9,7 +9,25 @@ import { loginSchema, signupSchema } from "@/lib/schemas";
 
 export async function isAuthenticated() {
   const session = await auth();
-  return Boolean(session?.user?.id);
+  const userId = session?.user?.id;
+  if (!userId) return false;
+  return userStillExists(userId);
+}
+
+/**
+ * True when the session user id still maps to a real row. Falls back to
+ * "exists" if the database is unreachable so a Neon blip never logs anyone out.
+ */
+async function userStillExists(userId: string): Promise<boolean> {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true },
+    });
+    return Boolean(user);
+  } catch {
+    return true;
+  }
 }
 
 export async function signupAction(input: unknown): Promise<{ error?: string }> {
@@ -76,5 +94,8 @@ export async function requireUserId(): Promise<string> {
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) redirect("/login");
+
+  const exists = await userStillExists(userId);
+  if (!exists) redirect("/api/auth/expired");
   return userId;
 }

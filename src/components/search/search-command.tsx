@@ -38,6 +38,12 @@ export function SearchCommand({
   );
 }
 
+function previewLabel(field: { value: string }) {
+  if (field.value === "true") return "On";
+  if (field.value === "false") return "Off";
+  return field.value || "—";
+}
+
 function SearchPalette({ onClose }: { onClose: () => void }) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -197,8 +203,16 @@ function SearchPalette({ onClose }: { onClose: () => void }) {
                           </>
                         ) : null}
                       </span>
+                      {item.previewFields[0] ? (
+                        <span className="mt-1 block truncate text-xs text-muted">
+                          <span className="font-medium text-faint">
+                            {item.previewFields[0].name}:
+                          </span>{" "}
+                          {previewLabel(item.previewFields[0])}
+                        </span>
+                      ) : null}
                     </span>
-                    <FiArrowRight className="h-4 w-4 shrink-0 text-faint opacity-0 transition-opacity group-hover:opacity-100" />
+                    <FiArrowRight className="h-[18px] w-[18px] shrink-0 text-faint opacity-0 transition-opacity group-hover:opacity-100" />
                   </motion.button>
                 </li>
               ))}
