@@ -1,4 +1,3 @@
-import { bannerBackground } from "@/lib/colors";
 import type { ItemAppearance } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -10,12 +9,13 @@ export function ItemBanner({
   appearance: ItemAppearance;
   className?: string;
 }) {
-  if (appearance.banner === "none") return null;
   return (
     <span
       aria-hidden
       className={cn("block h-[3px] w-full", className)}
-      style={{ background: bannerBackground(appearance) }}
+      style={{
+        background: `color-mix(in srgb, ${appearance.accent} 75%, transparent)`,
+      }}
     />
   );
 }

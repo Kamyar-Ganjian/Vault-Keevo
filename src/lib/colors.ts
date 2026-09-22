@@ -1,5 +1,3 @@
-import type { ItemAppearance } from "@/lib/types";
-
 export interface AccentColor {
   name: string;
   value: string;
@@ -32,19 +30,4 @@ export function isValidHex(color: string): boolean {
 
 export function accentTileInk(accent: string): string {
   return `color-mix(in srgb, ${accent} 78%, var(--ink))`;
-}
-
-export function accentBorder(accent: string): string {
-  return `color-mix(in srgb, ${accent} 40%, transparent)`;
-}
-
-/** Top-edge stripe used on item cards and the editor preview. */
-export function bannerBackground({ accent, banner }: ItemAppearance): string {
-  if (banner === "gradient") {
-    return `linear-gradient(90deg, color-mix(in srgb, ${accent} 85%, transparent), color-mix(in srgb, ${accent} 40%, transparent))`;
-  }
-  if (banner === "accent") {
-    return `color-mix(in srgb, ${accent} 75%, transparent)`;
-  }
-  return "transparent";
 }

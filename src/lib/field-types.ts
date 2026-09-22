@@ -4,6 +4,7 @@ import {
   FiCalendar,
   FiCode,
   FiHash,
+  FiKey,
   FiLink,
   FiLock,
   FiMail,
@@ -14,6 +15,7 @@ import {
 export const FIELD_TYPES = [
   "text",
   "secret",
+  "password",
   "url",
   "email",
   "number",
@@ -25,7 +27,11 @@ export const FIELD_TYPES = [
 
 export type FieldType = (typeof FIELD_TYPES)[number];
 
-const SENSITIVE: ReadonlySet<FieldType> = new Set(["secret", "code"]);
+const SENSITIVE: ReadonlySet<FieldType> = new Set([
+  "secret",
+  "password",
+  "code",
+]);
 
 export function isSensitiveType(type: string): boolean {
   return SENSITIVE.has(type as FieldType);
@@ -39,6 +45,8 @@ export interface FieldTypeMeta {
   kind: "input" | "textarea" | "toggle";
   inputType?: string;
   sensitive: boolean;
+  /** When set, the type is self-describing and no custom name is needed. */
+  autoName?: string;
 }
 
 export const FIELD_TYPE_META: Record<FieldType, FieldTypeMeta> = {
@@ -58,6 +66,15 @@ export const FIELD_TYPE_META: Record<FieldType, FieldTypeMeta> = {
     inputType: "password",
     sensitive: true,
   },
+  password: {
+    label: "Password",
+    description: "Password",
+    icon: FiKey,
+    kind: "input",
+    inputType: "password",
+    sensitive: true,
+    autoName: "Password",
+  },
   url: {
     label: "URL",
     description: "Link",
@@ -65,6 +82,7 @@ export const FIELD_TYPE_META: Record<FieldType, FieldTypeMeta> = {
     kind: "input",
     inputType: "url",
     sensitive: false,
+    autoName: "URL",
   },
   email: {
     label: "Email",
@@ -73,6 +91,7 @@ export const FIELD_TYPE_META: Record<FieldType, FieldTypeMeta> = {
     kind: "input",
     inputType: "email",
     sensitive: false,
+    autoName: "Email",
   },
   number: {
     label: "Number",
@@ -89,6 +108,7 @@ export const FIELD_TYPE_META: Record<FieldType, FieldTypeMeta> = {
     kind: "input",
     inputType: "date",
     sensitive: false,
+    autoName: "Date",
   },
   longtext: {
     label: "Long text",
@@ -103,6 +123,7 @@ export const FIELD_TYPE_META: Record<FieldType, FieldTypeMeta> = {
     icon: FiToggleRight,
     kind: "toggle",
     sensitive: false,
+    autoName: "Toggle",
   },
   code: {
     label: "Code",
@@ -115,4 +136,14 @@ export const FIELD_TYPE_META: Record<FieldType, FieldTypeMeta> = {
 
 export function getFieldTypeMeta(type: string): FieldTypeMeta {
   return FIELD_TYPE_META[type as FieldType] ?? FIELD_TYPE_META.text;
+}
+
+/** Self-describing types (e.g. URL, Email, Password) don't need a custom name. */
+export function fieldNeedsName(type: string): boolean {
+  return !FIELD_TYPE_META[type as FieldType]?.autoName;
+}
+
+/** Resolve the display label for a field based on its type. */
+export function fieldLabel(type: string, name: string): string {
+  return FIELD_TYPE_META[type as FieldType]?.autoName ?? name;
 }

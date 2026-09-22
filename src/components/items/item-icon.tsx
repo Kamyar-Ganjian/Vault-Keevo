@@ -3,12 +3,6 @@ import { accentTileInk } from "@/lib/colors";
 import { cn } from "@/lib/utils";
 import type { ItemAppearance } from "@/lib/types";
 
-const SHAPES = {
-  circle: "rounded-full",
-  rounded: "rounded-xl",
-  square: "rounded-md",
-} as const;
-
 const SIZES = {
   xs: "h-6 w-6 [&_svg]:h-3.5 [&_svg]:w-3.5",
   sm: "h-8 w-8 [&_svg]:h-4 [&_svg]:w-4",
@@ -32,12 +26,7 @@ export function ItemIcon({
   const { Icon } = getIconDef(icon);
   return (
     <span
-      className={cn(
-        "grid shrink-0 select-none place-items-center",
-        SHAPES[appearance.iconShape],
-        SIZES[size],
-        className,
-      )}
+      className={cn("grid shrink-0 select-none place-items-center", "rounded-xl", SIZES[size], className)}
       style={{
         background: `linear-gradient(145deg, color-mix(in srgb, ${appearance.accent} 30%, var(--surface-2)), color-mix(in srgb, ${appearance.accent} 12%, var(--surface-2)))`,
         color: accentTileInk(appearance.accent),

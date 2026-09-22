@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { requireUserId } from "@/lib/actions/auth";
 import { ItemForm } from "@/components/items/item-form";
-import { VaultCore } from "@/components/vault-core";
 
 export const metadata: Metadata = {
   title: "New item — Keevo",

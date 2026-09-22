@@ -30,22 +30,12 @@ export const CATEGORY_COLORS: Record<Category, string> = {
   other: "#94a3b8",
 };
 
-export const ICON_SHAPES = ["circle", "rounded", "square"] as const;
-export const BANNER_STYLES = ["none", "accent", "gradient"] as const;
-
-export type IconShape = (typeof ICON_SHAPES)[number];
-export type BannerStyle = (typeof BANNER_STYLES)[number];
-
 export interface ItemAppearance {
   accent: string;
-  iconShape: IconShape;
-  banner: BannerStyle;
 }
 
 export const DEFAULT_APPEARANCE: ItemAppearance = {
   accent: "#6366f1",
-  iconShape: "rounded",
-  banner: "accent",
 };
 
 export interface FieldValue {

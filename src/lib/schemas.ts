@@ -1,10 +1,6 @@
 import { z } from "zod";
 import { FIELD_TYPES } from "./field-types";
-import {
-  BANNER_STYLES,
-  CATEGORY_VALUES,
-  ICON_SHAPES,
-} from "./types";
+import { CATEGORY_VALUES } from "./types";
 
 export const loginSchema = z.object({
   email: z.email("Enter a valid email address"),
@@ -46,8 +42,6 @@ const appearanceSchema = z.object({
     .min(1)
     .max(40)
     .regex(/^#/, "Pick an accent color"),
-  iconShape: z.enum(ICON_SHAPES),
-  banner: z.enum(BANNER_STYLES),
 });
 
 export const itemSchema = z.object({

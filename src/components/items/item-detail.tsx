@@ -118,15 +118,12 @@ export function ItemDetail({ item }: { item: ItemDetailData }) {
         transition={{ type: "spring", duration: 0.5, bounce: 0.08 }}
         className="mt-5 overflow-hidden rounded-xl bg-surface ring-1 ring-line"
       >
-        {item.appearance.banner !== "none" ? (
+        {item.appearance.accent ? (
           <div
             aria-hidden
             className="h-12 w-full sm:h-16"
             style={{
-              background:
-                item.appearance.banner === "gradient"
-                  ? `linear-gradient(120deg, color-mix(in srgb, ${item.appearance.accent} 36%, transparent), color-mix(in srgb, ${item.appearance.accent} 12%, transparent))`
-                  : `color-mix(in srgb, ${item.appearance.accent} 16%, transparent)`,
+              background: `color-mix(in srgb, ${item.appearance.accent} 16%, transparent)`,
             }}
           />
         ) : null}

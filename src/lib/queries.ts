@@ -3,10 +3,8 @@ import { prisma } from "@/lib/db";
 import { decryptSecret, isEncrypted } from "@/lib/secrets";
 import { getFieldTypeMeta, isSensitiveType } from "@/lib/field-types";
 import {
-  BANNER_STYLES,
   CATEGORY_VALUES,
   DEFAULT_APPEARANCE,
-  ICON_SHAPES,
   type ItemAppearance,
   type ItemCardData,
   type ItemDetailData,
@@ -15,22 +13,12 @@ import {
 function parseAppearance(raw: string | null | undefined): ItemAppearance {
   if (!raw) return DEFAULT_APPEARANCE;
   try {
-    const parsed = JSON.parse(raw) as Partial<ItemAppearance>;
+    const parsed = JSON.parse(raw) as { accent?: unknown };
     const accent =
       typeof parsed.accent === "string" && /^#/.test(parsed.accent)
         ? parsed.accent
         : DEFAULT_APPEARANCE.accent;
-    const iconShape = ICON_SHAPES.includes(
-      parsed.iconShape as ItemAppearance["iconShape"],
-    )
-      ? (parsed.iconShape as ItemAppearance["iconShape"])
-      : DEFAULT_APPEARANCE.iconShape;
-    const banner = BANNER_STYLES.includes(
-      parsed.banner as ItemAppearance["banner"],
-    )
-      ? (parsed.banner as ItemAppearance["banner"])
-      : DEFAULT_APPEARANCE.banner;
-    return { accent, iconShape, banner };
+    return { accent };
   } catch {
     return DEFAULT_APPEARANCE;
   }

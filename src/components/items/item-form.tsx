@@ -24,7 +24,7 @@ import {
   updateItemAction,
 } from "@/lib/actions/items";
 import { itemSchema, emptyField, type ItemInput } from "@/lib/schemas";
-import { FIELD_TYPE_META, isSensitiveType, type FieldType } from "@/lib/field-types";
+import { FIELD_TYPE_META, fieldLabel, isSensitiveType, type FieldType } from "@/lib/field-types";
 import { CATEGORIES, type ItemDetailData } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -43,8 +43,8 @@ export function ItemForm({
   const router = useRouter();
   const [showSecrets, setShowSecrets] = useState<Record<number, boolean>>({});
   const [saving, setSaving] = useState(false);
-  const [openFields, setOpenFields] = useState((item?.fields.length ?? 0) > 0);
-  const [openNotes, setOpenNotes] = useState(Boolean(item?.notes));
+  const [openFields, setOpenFields] = useState(true);
+  const [openNotes, setOpenNotes] = useState(true);
   const [openLook, setOpenLook] = useState(false);
 
   const {
@@ -79,9 +79,9 @@ export function ItemForm({
             icon: "box",
             category: "other",
             favorite: false,
-            appearance: { accent: "#6366f1", iconShape: "rounded", banner: "accent" },
+            appearance: { accent: "#6366f1" },
             notes: "",
-            fields: [] as { name: string; type: "text"; value: string }[],
+            fields: [emptyField()] as { name: string; type: "text"; value: string }[],
           },
   });
 
@@ -94,7 +94,10 @@ export function ItemForm({
   const values = watch();
   const appearance = values.appearance;
 
-  const previewFields = values.fields.filter((f) => f.name.trim()).slice(0, 4);
+  const previewFields = values.fields
+    .map((f) => ({ ...f, name: fieldLabel(f.type, f.name) }))
+    .filter((f) => f.name.trim() !== "" || f.value.trim() !== "")
+    .slice(0, 4);
 
   async function onSubmit(input: ItemInput) {
     if (saving) return;
@@ -102,8 +105,8 @@ export function ItemForm({
     const payload: ItemInput = {
       ...input,
       fields: input.fields
-        .filter((f) => f.name.trim() !== "" || f.value !== "")
-        .map((f) => ({ ...f, value: f.value ?? "" })),
+        .filter((f) => f.value.trim() !== "" || f.name.trim() !== "")
+        .map((f) => ({ ...f, name: fieldLabel(f.type, f.name), value: f.value ?? "" })),
     };
 
     const result =
@@ -127,6 +130,12 @@ export function ItemForm({
 
   const fieldErrorName = errors.fields?.message as string | undefined;
 
+  const submitLabel = mode === "create" ? "Create item" : "Save changes";
+  const cancel = () =>
+    mode === "edit" && item
+      ? router.push(`/vault/items/${item.id}`)
+      : router.push("/vault");
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -147,24 +156,11 @@ export function ItemForm({
           ← {mode === "edit" ? "Back to item" : "Vault"}
         </BackLink>
         <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={() =>
-              mode === "edit" && item
-                ? router.push(`/vault/items/${item.id}`)
-                : router.push("/vault")
-            }
-            disabled={saving}
-          >
+          <Button type="button" variant="secondary" onClick={cancel} disabled={saving}>
             Cancel
           </Button>
           <Button type="submit" disabled={saving}>
-            {saving
-              ? "Saving…"
-              : mode === "create"
-                ? "Create item"
-                : "Save changes"}
+            {saving ? "Saving…" : submitLabel}
           </Button>
         </div>
       </div>
@@ -244,15 +240,21 @@ export function ItemForm({
                         type={type}
                         className="h-4 w-4 shrink-0 text-faint"
                       />
-                      <input
-                        placeholder="Field name"
-                        aria-label="Field name"
-                        className={cn(
-                          "h-8 min-w-0 flex-1 basis-36 rounded-lg border border-transparent bg-transparent px-2 text-sm font-medium text-ink placeholder:font-normal placeholder:text-faint",
-                          "focus-visible:border-line-strong focus-visible:bg-surface-2 focus-visible:outline-none",
-                        )}
-                        {...register(`fields.${index}.name`)}
-                      />
+                      {meta.autoName ? (
+                        <span className="flex h-8 min-w-0 flex-1 basis-36 items-center px-2 text-sm font-medium text-ink">
+                          {meta.autoName}
+                        </span>
+                      ) : (
+                        <input
+                          placeholder="Field name"
+                          aria-label="Field name"
+                          className={cn(
+                            "h-8 min-w-0 flex-1 basis-36 rounded-lg border border-transparent bg-transparent px-2 text-sm font-medium text-ink placeholder:font-normal placeholder:text-faint",
+                            "focus-visible:border-line-strong focus-visible:bg-surface-2 focus-visible:outline-none",
+                          )}
+                          {...register(`fields.${index}.name`)}
+                        />
+                      )}
                       <Select
                         aria-label="Field type"
                         className="h-8 w-36 shrink-0 px-2.5 text-xs"
@@ -409,7 +411,7 @@ export function ItemForm({
               open={openLook}
               onToggle={() => setOpenLook((o) => !o)}
               icon={<FiDroplet className="h-[17px] w-[17px]" />}
-              label="Icon & look"
+              label="Icon & color"
             >
               <div className="space-y-7">
                 <IconPicker
@@ -436,6 +438,18 @@ export function ItemForm({
             notes={values.notes ?? ""}
           />
         </aside>
+      </div>
+
+      <div className="sticky bottom-3 z-20 mt-8 flex items-center gap-2 rounded-xl border border-line bg-surface/85 px-3.5 py-2.5 shadow-elev backdrop-blur-xl sm:px-4">
+        <p className="min-w-0 flex-1 truncate text-[11px] text-faint sm:text-xs">
+          Leave blank anything you do not need — empty fields are skipped.
+        </p>
+        <Button type="button" variant="secondary" onClick={cancel} disabled={saving}>
+          Cancel
+        </Button>
+        <Button type="submit" disabled={saving}>
+          {saving ? "Saving…" : submitLabel}
+        </Button>
       </div>
     </form>
   );
@@ -526,7 +540,7 @@ function LivePreview({
   return (
     <div className="overflow-hidden rounded-xl bg-surface ring-1 ring-line">
       <ItemBanner appearance={appearance} />
-      <div className={cn("p-4", appearance.banner === "none" && "pt-5")}>
+      <div className={cn("p-4")}>
         <div className="flex items-center gap-3">
           <ItemIcon
             icon={icon || "box"}
